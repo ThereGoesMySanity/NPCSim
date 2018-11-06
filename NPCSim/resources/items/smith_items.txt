@@ -1,0 +1,15 @@
+ball bearings (1000)	1
+bell	1
+caltrops (20)	1
+chain (10ft)	5
+crowbar	2
+grappling hook	2
+sledgehammer	2
+lock	10
+manacles	2
+mirror, steel	5
+miner's pick	2
+iron pot	2
+shovel	2
+signet ring	5
+iron spikes (10)	1

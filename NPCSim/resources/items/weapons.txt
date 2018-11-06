@@ -1,0 +1,37 @@
+club	1
+dagger	2
+greatclub	2
+handaxe	5
+javelin	5
+light hammer	2
+mace	5
+quarterstaff	2
+sickle	1
+spear	1
+light crossbow	25
+hand crossbow	75
+heavy crossbow	50
+dart	5
+shortbow	25
+sling	1
+battleaxe	10
+flail	10
+glaive	20
+greataxe	30
+greatsword	50
+halberd	20
+lance	10
+longsword	15
+maul	10
+morningstar	15
+pike	5
+rapier	25
+scimitar	25
+shortsword	10
+trident	5
+war pick	5
+warhammer	15
+whip	2
+blowgun	10
+longbow	50
+net	1
