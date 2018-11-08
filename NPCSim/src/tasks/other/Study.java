@@ -13,7 +13,7 @@ public class Study extends Task {
     }
 
     @Override
-    protected double addWeightSub(Person p) {
+    protected double weightSub(Person p) {
         return 1;
     }
 
@@ -31,10 +31,5 @@ public class Study extends Task {
 
     @Override
     public void updatePost() {
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Study;
     }
 }

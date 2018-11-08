@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static main.Main.*;
-import static people.Stats.Stat.CHA;
 import static people.Stats.Stat.CON;
 import static util.Variables.Ints.MONSTER_CHANCE;
 
@@ -42,7 +41,7 @@ public class Town {
         food = startPop * 12;
         Map<Class<? extends TownTask>, Integer> classMap_final = new HashMap<>(classMap);
         modifyTasks(classMap_final);
-        taskMan.addTasks(this, c -> classMap_final.getOrDefault(c, 0));
+        taskMan.addTasks(this, classMap_final);
     }
 
     public void modifyTasks(Map<Class<? extends TownTask>, Integer> classMap) {
@@ -57,8 +56,10 @@ public class Town {
     }
 
     public void update() {
-        spawnMonster();
-        socialize();
+        taskMan.addTasks(this, Map.of(
+                Socialize.class, rand.nextInt(residents.size() / 10 + 1),
+                Fight.class, rand.nextInt(10 * vars.get(MONSTER_CHANCE)) < danger? 1 : 0
+        ));
         food -= residents.size();
         if (food < 0) {
             Person p = Weight.weightedChoice(p1 -> Math.pow(0.2, p1.getStatMod(CON)), residents);
@@ -68,22 +69,6 @@ public class Town {
         List<Person> temp = new ArrayList<>(residents);
         temp.forEach(Person::update);
         temp.forEach(Person::work);
-    }
-
-    private void socialize() {
-        for (int i = 0; i < rand.nextInt(residents.size() / 10 + 1); i++) {
-            Person p = Weight.weightedChoice(p1 -> Math.pow(4, p1.getStatMod(CHA)), residents);
-            Task t = taskMan.newTask(Socialize.class, this);
-            p.addTask(t);
-            jobs.add(t);
-        }
-    }
-
-    protected void spawnMonster() {
-        if (rand.nextInt(10 * vars.get(MONSTER_CHANCE)) < danger) {
-            Task t = taskMan.newTask(Fight.class, this);
-            addTask(t);
-        }
     }
 
     public void farm(int i) {

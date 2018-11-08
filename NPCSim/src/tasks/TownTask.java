@@ -10,9 +10,14 @@ public abstract class TownTask extends Task {
     private Town town;
     private JLabel townLabel;
 
-    protected TownTask(int size, Town t) {
-        super(false, size);
+
+    protected TownTask(int size, Town t, boolean unique) {
+        super(false, size, unique);
         town = t;
+    }
+
+    protected TownTask(int size, Town t) {
+        this(size, t, true);
     }
 
     public TownTask(Town t) {

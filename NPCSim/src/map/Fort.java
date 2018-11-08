@@ -1,14 +1,9 @@
 package map;
 
-import tasks.Task;
 import tasks.TownTask;
 import tasks.town.Soldier;
-import tasks.town.Fight;
 
 import java.util.Map;
-
-import static main.Main.*;
-import static util.Variables.Ints.MONSTER_CHANCE;
 
 public class Fort extends Town {
 
@@ -22,12 +17,4 @@ public class Fort extends Town {
         super.modifyTasks(cm);
         cm.put(Soldier.class, 3);
     }
-    @Override
-    protected void spawnMonster() {
-        if (rand.nextInt(10 * vars.get(MONSTER_CHANCE)) < danger) {
-            Task t = taskMan.newTask(Fight.class, this);
-            addTask(t);
-        }
-    }
-
 }

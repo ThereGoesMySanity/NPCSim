@@ -14,7 +14,7 @@ public class College extends TownTask {
     private HashMap<Person, Integer> work = new HashMap<>();
     public College(Town t) {
         super(t);
-        if(t != null) name = tables.chooseName("college").replace("Town", t.toString());
+        name = tables.chooseName("college").replace("Town", t.toString());
     }
 
     @Override
@@ -24,7 +24,7 @@ public class College extends TownTask {
     }
 
     @Override
-    protected double addWeightSub(Person p) {
+    protected double weightSub(Person p) {
         return getStatWeight(p, INT);
     }
 

@@ -3,10 +3,15 @@ package tasks.town;
 import map.Town;
 import people.Person;
 import tasks.TownTask;
+import util.Weight;
+
+import static people.Stats.Stat.CHA;
 
 public class Socialize extends TownTask {
     public Socialize(Town t) {
         super(t);
+        Person p = Weight.weightedChoice(p1 -> Math.pow(4, p1.getStatMod(CHA)), t.residents);
+        p.addTask(this);
     }
 
     @Override
@@ -15,7 +20,7 @@ public class Socialize extends TownTask {
     }
 
     @Override
-    public double addWeightSub(Person p) {
+    public double weightSub(Person p) {
         double sum = Math.max(0, people().stream().mapToDouble(p::getRel).sum());
         return Math.log1p(sum) + 1;
     }

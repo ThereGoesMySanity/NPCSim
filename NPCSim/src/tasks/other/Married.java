@@ -15,7 +15,7 @@ public class Married extends Task {
     }
 
     @Override
-    public double addWeightSub(Person p) {
+    public double weightSub(Person p) {
         return -1;
     }
 
@@ -52,10 +52,5 @@ public class Married extends Task {
 
     @Override
     public void updatePost() {
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Married;
     }
 }

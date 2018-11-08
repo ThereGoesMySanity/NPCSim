@@ -20,7 +20,7 @@ public class Marry extends Task {
     }
 
     @Override
-    public double addWeightSub(Person p) {
+    public double weightSub(Person p) {
         if (p.getAge() < 18 || p.spouse != null) return 0;
         Person spouse = getSpouseCandidate(p);
         if (spouse == null) return 0;
@@ -103,16 +103,5 @@ public class Marry extends Task {
     @Override
     public String toString() {
         return "The marriage of " + spouse1 + " and " + spouse2;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Marry;
-//		if (o instanceof Marry) {
-//			Marry m = (Marry)o;
-//			return m.spouse1.equals(spouse1) && m.spouse2.equals(spouse2)
-//					|| m.spouse2.equals(spouse1) && m.spouse1.equals(spouse2);
-//		}
-//		return false;
     }
 }

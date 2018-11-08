@@ -11,7 +11,7 @@ public class Farm extends TownTask {
     }
 
     @Override
-    public double addWeightSub(Person p) {
+    public double weightSub(Person p) {
         return getTown().foodWeight();
     }
 
@@ -28,10 +28,5 @@ public class Farm extends TownTask {
     @Override
     public void updatePost() {
         groupInteract(0.1, 1);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Farm;
     }
 }

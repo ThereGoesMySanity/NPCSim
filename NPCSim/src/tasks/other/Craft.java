@@ -21,7 +21,7 @@ public class Craft extends Task {
     }
 
     @Override
-    protected double addWeightSub(Person p) {
+    protected double weightSub(Person p) {
         return 1;
     }
 
@@ -49,11 +49,6 @@ public class Craft extends Task {
     @Override
     public String toString() {
         return "Crafting a(n) " + item;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Craft;
     }
 
     @Override

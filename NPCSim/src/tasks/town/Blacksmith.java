@@ -23,7 +23,7 @@ public class Blacksmith extends TownTask {
     }
 
     @Override
-    protected double addWeightSub(Person p) {
+    protected double weightSub(Person p) {
         return 1;
     }
 

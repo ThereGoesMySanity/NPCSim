@@ -19,7 +19,7 @@ public class Soldier extends TownTask {
     }
 
     @Override
-    protected double addWeightSub(Person p) {
+    protected double weightSub(Person p) {
         return p.level / 5. + 1;
     }
 

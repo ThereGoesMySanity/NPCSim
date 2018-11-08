@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.ToIntFunction;
+import java.util.Map;
 
 public class TaskManager {
     @SuppressWarnings("unchecked")
@@ -103,10 +103,10 @@ public class TaskManager {
         toRemove.add(t);
     }
 
-    public void addTasks(Town t, ToIntFunction<Class<? extends TownTask>> tif) {
-        for (int i = 0; i < townTasks.length; i++) {
-            for (int j = 0; j < tif.applyAsInt(townTasks[i]); j++) {
-                t.addTask(newTask(i, t));
+    public void addTasks(Town t, Map<Class<? extends TownTask>, Integer> map) {
+        for(Class<? extends TownTask> tt : townTasks) {
+            for (int j = 0; j < map.getOrDefault(tt, 0); j++) {
+                t.addTask(newTask(tt, t));
             }
         }
     }

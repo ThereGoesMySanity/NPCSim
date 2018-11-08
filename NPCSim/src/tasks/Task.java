@@ -15,10 +15,15 @@ public abstract class Task {
     private ArrayList<Person> participants = new ArrayList<>();
     private int maxSize;
     private int id;
+    private boolean unique;
 
     public Task(boolean temp, int size) {
+        this(temp, size, true);
+    }
+    public Task(boolean temp, int size, boolean unique) {
         template = temp;
         maxSize = size;
+        this.unique = unique;
     }
 
     public Task(boolean temp) {
@@ -63,13 +68,15 @@ public abstract class Task {
     }
 
     public double getWorkWeight(Person p) {
-        return addWeightSub(p);
+        return weightSub(p);
     }
 
     public double getAddWeight(Person p) {
         if (maxSize != -1 && size() >= maxSize) return 0;
-        if (p.getTasks().contains(this)) return 0;
-        else return addWeightSub(p);
+        //Can't add two tasks of the same type if unique
+        if (unique && p.getTasks().stream()
+                .anyMatch(t -> t.getClass().isInstance(this))) return 0;
+        else return weightSub(p);
     }
 
     public int getID() {
@@ -99,8 +106,19 @@ public abstract class Task {
     public void updatePane() {
     }
 
-    protected abstract double addWeightSub(Person p);
+    /**
+     * Override to return the add/work weight of the given task.
+     * To have different add/work weights, override getAddWeight or getWorkWeight
+     * @param p The person to weight
+     * @return The weight of the given task [0, inf)
+     */
+    protected abstract double weightSub(Person p);
 
+    /**
+     * Works on this
+     * @param p The person working
+     * @return Whether or not the task was completed (triggers end of task if true)
+     */
     public abstract boolean work(Person p);
 
     public abstract void update();

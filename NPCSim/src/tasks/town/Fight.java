@@ -29,17 +29,20 @@ public class Fight extends TownTask {
 
     public Fight(Town t) {
         super(t);
-        if (t != null) {
-            int level = 1;
-            while (rand.nextBoolean()) level++;
-            monster = tables.monsterGen.getMonster(t, level);
-            hp = monster.getHP();
-        }
+        int level = 1;
+        while (rand.nextBoolean()) level++;
+        monster = tables.monsterGen.getMonster(t, level);
+        hp = monster.getHP();
     }
 
     @Override
-    public double addWeightSub(Person p) {
+    public double getAddWeight(Person p) {
         if(getTown() instanceof Fort) return 0;
+        return super.getAddWeight(p);
+    }
+
+    @Override
+    public double weightSub(Person p) {
         return (p.level - 2)
                 * Math.max(getStatWeight(p, STR), getStatWeight(p, DEX))
                 * vars.get(FIGHT_WEIGHT)
@@ -52,7 +55,7 @@ public class Fight extends TownTask {
         int dmg = p.attack();
         hp -= dmg;
         if (hp <= 0) {
-            worked.forEach(o -> o.addXP(monster.getXP() / size()));
+            worked.forEach(o -> o.addXP(monster.getXP() / worked.size()));
         }
         p.record("Did " + dmg + " damage in " + this);
         return hp <= 0;

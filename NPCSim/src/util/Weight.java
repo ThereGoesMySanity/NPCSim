@@ -58,8 +58,9 @@ public class Weight {
     }
 
     public static <K> K choose(Supplier<Stream<K>> str) {
-        int num = rand.nextInt((int) str.get().count());
-        return choose(str.get().iterator(), num);
+        int size = (int) str.get().count();
+        if(size == 0) return null;
+        else return choose(str.get().iterator(), rand.nextInt(size));
     }
 
     public static <K> K choose(Iterator<K> iter, int num) {

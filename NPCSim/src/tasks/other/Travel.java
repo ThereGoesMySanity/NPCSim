@@ -15,9 +15,9 @@ public class Travel extends Task {
     }
 
     @Override
-    protected double addWeightSub(Person p) {
+    protected double weightSub(Person p) {
         if (p.getTown().residents.size() < 5) return 0;
-        else return 0;
+        else return 0.1;
     }
 
     @Override

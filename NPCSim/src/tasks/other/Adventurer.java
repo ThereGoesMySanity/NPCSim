@@ -16,8 +16,8 @@ public class Adventurer extends Travel {
     }
 
     @Override
-    protected double addWeightSub(Person p) {
-        return super.addWeightSub(p)
+    protected double weightSub(Person p) {
+        return super.weightSub(p)
                 * Arrays.stream(Stat.values()).mapToDouble(s -> getStatWeight(p, s)).max().orElse(1);
     }
 
