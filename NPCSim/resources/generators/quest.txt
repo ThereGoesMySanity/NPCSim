@@ -1,0 +1,80 @@
+10 Heroes are required! You must stop the
+	Monster
+	King
+	Thief
+	Villain
+	Peasant
+	Cow
+	Wizard
+	Cultists
+	Pixies
+	Dragon
+10 from
+	Destroying the town
+	Torturing someone
+	Holding someone prisoner
+	Gaining an unlikely ally
+	Having a falling out with an old friend
+	Betraying his superiors
+	Stealing
+	Hatching a crazy plan
+	Search for a certain someone
+	Bestowing a curse
+8 before they
+	Discover the location of the dungeon
+	Find the artifact
+	Realise it's all an illusion
+	Discover how easy being evil is
+	Become addicted to causing pain
+	Lose their temper
+	Learn that they had been lied to
+	Know that I am the one they want
+12 or else
+	they will destroy the world
+	we all will die
+	we're all doomed
+	There'll be no more vegetable contests
+	I wont have any money to pay you
+	The entire town will starve
+	War will break out
+	Alliances will fall
+	A civil war will erupt
+	We will see a string of murders
+	Our gods will no longer protect us
+	A new power will rise
+6 But if you
+	Travel to
+	Avoid
+	Seek
+	Make an ally in
+	Meet the stranger in
+	Retrieve the magic item from
+8 the
+	Meddling Kids
+	Town Watch
+	forest
+	river
+	fortress
+	king
+	volcano
+	villain's lair
+8 you will find
+	a way to increase your power
+	knowledge
+	valuable insight
+	a way to steel your defences
+	that you can increase your travelling speed
+	a shortcut
+	out the foe's weakness
+	out who the foe's allies are
+10 which will
+	Help you save the day
+	Prepare you for the pain
+	Make you immune to the magic
+	Give you a plan B
+	Consolidate any losses
+	Reward you greatly should you succeed
+	Etch your name in history
+	Give you an edge
+	Give you some time to spare
+	Allow you to plan your arrival

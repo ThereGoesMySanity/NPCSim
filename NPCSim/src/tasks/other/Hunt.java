@@ -3,33 +3,28 @@ package tasks.other;
 import people.Person;
 import tasks.Task;
 
-public class Hunt extends Task{
+import static people.Stats.Stat.DEX;
 
-	public Hunt(boolean temp) {
-		super(temp);
-	}
+public class Hunt extends Task {
 
-	@Override
-	protected double addWeightSub(Person p) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public Hunt(boolean temp) {
+        super(temp);
+    }
 
-	@Override
-	public boolean work(Person p) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    protected double addWeightSub(Person p) {
+        return 1;
+    }
 
-	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public boolean work(Person p) {
+        p.getTown().farm(p.getStat(DEX) / 2);
+        return true;
+    }
 
-	@Override
-	public void updatePost() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void update() {}
+
+    @Override
+    public void updatePost() {}
 }
