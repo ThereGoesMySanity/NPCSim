@@ -6,6 +6,7 @@ import tasks.Task;
 import java.util.Comparator;
 import java.util.function.Consumer;
 
+import static main.Main.taskMan;
 import static main.Main.vars;
 import static util.Variables.Doubles.MARRIAGE_WEIGHT;
 
@@ -50,7 +51,8 @@ public class Marry extends Task {
         if (marry) {
             forBoth(p1 -> p1.marry(getOther(p1)));
             forBoth(p1 -> p1.record("Married " + getOther(p1)));
-            forBoth(p1 -> p1.addTask(Married.class));
+            Task married = taskMan.newTask(Married.class);
+            forBoth(p1 -> p1.addTask(married));
             Person.interact(spouse1, spouse2, 5, 2);
         }
         return marry;

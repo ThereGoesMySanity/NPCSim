@@ -27,4 +27,9 @@ public class Hunt extends Task {
 
     @Override
     public void updatePost() {}
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Hunt;
+    }
 }

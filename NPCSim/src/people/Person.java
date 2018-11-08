@@ -13,6 +13,8 @@ import java.util.stream.Stream;
 
 import static main.Main.*;
 import static people.Stats.Stat.CHA;
+import static people.Stats.Stat.DEX;
+import static people.Stats.Stat.STR;
 import static util.Variables.Doubles.*;
 import static util.Variables.Ints.TASKS;
 
@@ -66,10 +68,6 @@ public class Person {
 
     public void addTask(Task t) {
         addTaskFinal(taskMan.newTask(t));
-    }
-
-    public void addTask(Class<? extends Task> c) {
-        addTaskFinal(taskMan.newTask(c, town));
     }
 
     private void addTaskFinal(Task t) {
@@ -157,7 +155,7 @@ public class Person {
         p2.interact(p1, newMean, stdev / 4);
     }
 
-    public void changeRel(Person p, double delta) {
+    private void changeRel(Person p, double delta) {
         relationships.put(p, (getRel(p) + delta) / 2);
     }
 
@@ -240,6 +238,9 @@ public class Person {
         first = f;
         last = l;
     }
+    public void newLastName(String file) {
+        last = tables.chooseName("surnames_"+file);
+    }
 
     public String getLastName() {
         return last;
@@ -255,10 +256,10 @@ public class Person {
     }
 
     public int attack() {
-        return attack.roll() + level * 2;
+        return attack.roll() + level * 2 + Math.max(getStatMod(STR), getStatMod(DEX));
     }
 
-    public void setAttack(Dice attack) {
-        this.attack = attack;
+    public void setAttack(String attack) {
+        this.attack = new Dice(attack);
     }
 }

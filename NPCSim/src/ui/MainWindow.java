@@ -14,12 +14,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class MainWindow extends JFrame {
-    private static final Main main = new Main();
-    private JPanel contentPane;
-    private MapPane mapPane;
-    private VariablePane varPane;
     private ArrayList<TaskPane> pins = new ArrayList<>();
-    TaskPane taskPane;
+    private TaskPane taskPane;
     private JTabbedPane tabbedPane;
     private JPopupMenu menu;
     private Component tab;
@@ -31,7 +27,7 @@ public class MainWindow extends JFrame {
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
-                MainWindow frame = new MainWindow();
+                MainWindow frame = new MainWindow(args);
                 frame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -42,10 +38,13 @@ public class MainWindow extends JFrame {
     /**
      * Create the frame.
      */
-    public MainWindow() {
+    private MainWindow(String[] args) {
+        if(args.length > 0) Main.rand.setSeed(Integer.parseInt(args[0]));
+        Main main = new Main();
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(2000, 100, 778, 516);
-        contentPane = new JPanel();
+        JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(new BorderLayout());
         setContentPane(contentPane);
@@ -73,7 +72,8 @@ public class MainWindow extends JFrame {
                     if (taskPane.equals(tab)) {
                         pin.setVisible(true);
                         unpin.setVisible(false);
-                    } else if (pins.contains(tab)) {
+                    } else //noinspection SuspiciousMethodCalls
+                        if (pins.contains(tab)) {
                         pin.setVisible(false);
                         unpin.setVisible(true);
                     } else {
@@ -84,9 +84,9 @@ public class MainWindow extends JFrame {
             }
         });
         contentPane.add(tabbedPane, BorderLayout.CENTER);
-        mapPane = new MapPane(this, main);
+        MapPane mapPane = new MapPane(this, main);
         tabbedPane.addTab("Towns", mapPane);
-        varPane = new VariablePane();
+        VariablePane varPane = new VariablePane();
         tabbedPane.addTab("Variables", varPane);
         taskPane = new TaskPane();
     }
@@ -106,18 +106,18 @@ public class MainWindow extends JFrame {
         }
     }
 
-    public void setTaskPane(TaskPane t) {
+    private void setTaskPane(TaskPane t) {
         taskPane = t;
         visible = true;
     }
 
-    public void pin() {
+    private void pin() {
         pins.add(taskPane);
         taskPane = new TaskPane();
         visible = false;
     }
 
-    public void unpin(TaskPane t) {
+    private void unpin(TaskPane t) {
         pins.remove(t);
         if (!visible) setTaskPane(t);
         else {

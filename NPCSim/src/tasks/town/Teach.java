@@ -12,7 +12,7 @@ public class Teach extends TownTask {
 
     @Override
     protected double addWeightSub(Person p) {
-        return 0;
+        return 1;
     }
 
     @Override

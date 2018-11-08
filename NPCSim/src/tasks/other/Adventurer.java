@@ -4,7 +4,6 @@ import people.Person;
 import people.Stats.Stat;
 import tasks.Task;
 import tasks.town.Fight;
-import util.Dice;
 
 import java.util.Arrays;
 
@@ -25,7 +24,7 @@ public class Adventurer extends Travel {
     @Override
     public void add(Person p) {
         super.add(p);
-        p.setAttack(new Dice("1d10"));
+        p.setAttack("1d10");
     }
 
     @Override
@@ -35,7 +34,7 @@ public class Adventurer extends Travel {
                 return travel(p);
             } else {
                 monster = p.getTown().getRandomTask(Fight.class);
-                p.addTask(monster);
+                if(monster != null) p.addTask(monster);
             }
         }
         return false;

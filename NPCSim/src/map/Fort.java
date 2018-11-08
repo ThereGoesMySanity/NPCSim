@@ -2,7 +2,7 @@ package map;
 
 import tasks.Task;
 import tasks.TownTask;
-import tasks.keep.Soldier;
+import tasks.town.Soldier;
 import tasks.town.Fight;
 
 import java.util.Map;
@@ -20,7 +20,7 @@ public class Fort extends Town {
     @Override
     public void modifyTasks(Map<Class<? extends TownTask>, Integer> cm) {
         super.modifyTasks(cm);
-        cm.put(Soldier.class, 5);
+        cm.put(Soldier.class, 3);
     }
     @Override
     protected void spawnMonster() {

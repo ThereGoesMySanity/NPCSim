@@ -63,6 +63,7 @@ public class Weight {
     }
 
     public static <K> K choose(Iterator<K> iter, int num) {
+        if(!iter.hasNext()) return null;
         for (int i = 0; i < num; i++) iter.next();
         return iter.next();
     }

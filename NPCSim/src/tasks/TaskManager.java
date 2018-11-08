@@ -7,58 +7,49 @@ import tasks.town.*;
 import ui.map.TaskPane;
 
 import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.ToIntFunction;
 
 public class TaskManager {
-    @FunctionalInterface
-    public interface TaskFactory<T extends Task> {
-        T newInstance(boolean t);
-    }
-
-    @FunctionalInterface
-    public interface TownTaskFactory<T extends TownTask> {
-        T newInstance(Town t);
-    }
-
-    private final TownTaskFactory<?>[] townTasks = {
-            Blacksmith::new,
-            College::new,
-            Farm::new,
-            Fight::new,
-            Quest::new,
-            Shop::new,
-            Socialize::new,
+    @SuppressWarnings("unchecked")
+    private final Class<? extends Task>[] taskList = new Class[]{
+            Adventurer.class,
+            Craft.class,
+            Divorce.class,
+            Hunt.class,
+            Married.class,
+            Marry.class,
+            Study.class,
+            Travel.class,
     };
-    private final TaskFactory<?>[] taskList = {
-            Adventurer::new,
-            Craft::new,
-            Divorce::new,
-            Hunt::new,
-            Married::new,
-            Marry::new,
-            Study::new,
-            Travel::new,
+    @SuppressWarnings("unchecked")
+    private final Class<? extends TownTask>[] townTasks = new Class[] {
+            Blacksmith.class,
+            College.class,
+            Farm.class,
+            Fight.class,
+            Quest.class,
+            Shop.class,
+            Socialize.class,
+            Soldier.class,
+            Teach.class,
     };
     private Task[] templates = new Task[taskList.length];
-    @SuppressWarnings("unchecked")
-    private Class<? extends TownTask>[] townTaskClass = new Class[townTasks.length];
-    private HashMap<Class<? extends Task>, Integer> taskMap = new HashMap<>(taskList.length);
-    private HashMap<Class<? extends Task>, Integer> townTaskMap = new HashMap<>(townTasks.length);
     public HashMap<Task, TaskPane> panes = new HashMap<>();
     private ArrayList<Task> activeTasks = new ArrayList<>();
     private ArrayList<Task> toRemove = new ArrayList<>();
 
     public TaskManager() {
-        for (int i = 0; i < templates.length; i++) {
-            templates[i] = taskList[i].newInstance(true);
-            templates[i].setID(i);
-            taskMap.put(templates[i].getClass(), i);
-        }
-        for (int i = 0; i < townTasks.length; i++) {
-            townTaskClass[i] = townTasks[i].newInstance(null).getClass();
-            townTaskMap.put(townTaskClass[i], i);
+        try {
+            for (int i = 0; i < templates.length; i++) {
+                templates[i] = taskList[i].getConstructor(boolean.class).newInstance(true);
+                templates[i].setID(i);
+            }
+        } catch (InstantiationException | IllegalAccessException
+                | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 
@@ -67,33 +58,35 @@ public class TaskManager {
     }
 
     public Task newTask(Task t) {
-        if (t.isTemplate()) return newTask(t.getClass(), null);
+        if (t.isTemplate()) return newTask(t.getClass());
         else return t;
     }
 
+    private Task newTask(int i) {
+        return newTask(taskList[i]);
+    }
+
+    private TownTask newTask(int i, Town t) {
+        return newTask(townTasks[i], t);
+    }
+
     public <T extends Task> T newTask(Class<T> clazz, Town t) {
-        Task task;
-        if (townTaskMap.containsKey(clazz)) {
-            task = clazz.cast(newTask(townTaskMap.get(clazz), t));
-        } else {
-            task = newTask(taskMap.get(clazz));
+        try {
+            return newTaskFinal(clazz.getConstructor(Town.class).newInstance(t));
+        } catch (InstantiationException | IllegalAccessException
+                | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
         }
-        return clazz.cast(task);
+        return null;
     }
-
-    @SuppressWarnings("unchecked")
-    private <T extends Task> T newTask(int i) {
-        T task = (T) taskList[i].newInstance(false);
-        task.setID(i);
-        activeTasks.add(task);
-        return newTaskFinal(task);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T extends TownTask> T newTask(int i, Town t) {
-        T task = (T) townTasks[i].newInstance(t);
-        task.setID(i);
-        return newTaskFinal(task);
+    public <T extends Task> T newTask(Class<T> clazz) {
+        try {
+            return newTaskFinal(clazz.getConstructor(boolean.class).newInstance(false));
+        } catch (InstantiationException | IllegalAccessException
+                | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private <T extends Task> T newTaskFinal(T task) {
@@ -112,7 +105,7 @@ public class TaskManager {
 
     public void addTasks(Town t, ToIntFunction<Class<? extends TownTask>> tif) {
         for (int i = 0; i < townTasks.length; i++) {
-            for (int j = 0; j < tif.applyAsInt(townTaskClass[i]); j++) {
+            for (int j = 0; j < tif.applyAsInt(townTasks[i]); j++) {
                 t.addTask(newTask(i, t));
             }
         }

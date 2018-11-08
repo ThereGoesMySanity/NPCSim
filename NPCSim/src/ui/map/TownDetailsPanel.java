@@ -83,7 +83,7 @@ public class TownDetailsPanel extends JPanel {
         gbc_lblDanger.gridy = 1;
         panel.add(lblDanger, gbc_lblDanger);
 
-        surnames = new JList<String>();
+        surnames = new JList<>();
         GridBagConstraints gbc_surnames = new GridBagConstraints();
         gbc_surnames.fill = GridBagConstraints.HORIZONTAL;
         gbc_surnames.insets = new Insets(0, 0, 5, 5);

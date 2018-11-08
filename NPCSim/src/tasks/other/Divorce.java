@@ -16,8 +16,9 @@ public class Divorce extends Task {
 
     @Override
     public boolean work(Person p) {
-        // TODO Auto-generated method stub
-        return false;
+        p.divorce();
+        //TODO
+        return true;
     }
 
     @Override

@@ -42,7 +42,7 @@ public class MapData {
             ), 30, 1, "sea", "underwater", "grassland"),
             new Town("Middenbury", Map.of(
                     Farm.class, 13
-            ), 20, 3, "city", "grassland"),
+            ), 40, 3, "city", "grassland"),
             new Town("Leandea", Map.of(
                     Farm.class, 10
             ), 40, 4, "river", "city", "mountain", "grassland"),
@@ -57,7 +57,7 @@ public class MapData {
             ), 10, 3, "forest", "grassland"),
             new Town("Casterham", Map.of(
                     Farm.class, 10
-            ), 10, 5, "river", "city", "grassland"),
+            ), 30, 5, "river", "city", "grassland"),
             new Town("Marisbury", Map.of(
                     Farm.class, 5
             ), 10, 4, "grassland", "mountain"),
@@ -66,7 +66,7 @@ public class MapData {
             ), 10, 9, "swamp", "river", "city", "mountain"),
             new Town("Southfort City", Map.of(
                     Farm.class, 6
-            ), 10, 7, "forest", "city", "desert", "hill"),
+            ), 30, 7, "forest", "city", "desert", "hill"),
             new Fort("Southfort", Map.of(
                     Farm.class, 1
             ), 10, 10, "forest", "desert", "soldier", "mountain"),

@@ -40,12 +40,13 @@ public class Town {
             new Person(this);
         }
         food = startPop * 12;
-        modifyTasks(classMap);
-        taskMan.addTasks(this, c -> classMap.getOrDefault(c, 0));
+        Map<Class<? extends TownTask>, Integer> classMap_final = new HashMap<>(classMap);
+        modifyTasks(classMap_final);
+        taskMan.addTasks(this, c -> classMap_final.getOrDefault(c, 0));
     }
 
     public void modifyTasks(Map<Class<? extends TownTask>, Integer> classMap) {
-        if(residents.size() >= 30) {
+        if(rand.nextInt(2) + residents.size() / 10 > 3) {
             classMap.put(College.class, 1);
             classMap.put(Teach.class, 5);
         } else {
