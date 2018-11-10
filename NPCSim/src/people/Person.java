@@ -6,36 +6,37 @@ import tasks.Task;
 import util.Dice;
 import util.Weight;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
 import static main.Main.*;
-import static people.Stats.Stat.CHA;
-import static people.Stats.Stat.DEX;
-import static people.Stats.Stat.STR;
-import static util.Variables.Doubles.*;
+import static people.Stats.Stat.*;
+import static ui.map.DetailsPanel.DetailsObject;
+import static ui.map.DetailsPanel.Type;
+import static util.Variables.Doubles.CHA_REL_WEIGHT;
+import static util.Variables.Doubles.TASK_CHANCE;
 import static util.Variables.Ints.TASKS;
 
-public class Person {
+public class Person implements DetailsObject, Serializable {
     private String first, last;
-    public Stats stats = new Stats();
+    public final Stats stats = new Stats();
     public int level;
     public int xp;
-    public int gender = rand.nextInt(2);
+    public final int gender = rand.nextInt(2);
     private int months;
     private String notes = "";
     private Town town;
     public Person spouse;
     private boolean dead = false;
-    private Race race;
+    private final Race race;
     private Dice attack = new Dice("1d6");
-    public HashMap<Person, Double> relationships = new HashMap<>();
-    private ArrayList<Task> tasks = new ArrayList<>();
-    private ArrayList<String> history = new ArrayList<>();
-    private Alignment alignment = new Alignment();
-    private double[] taskWeights = new double[taskMan.tasksSize()];
+    public final HashMap<Person, Double> relationships = new HashMap<>();
+    private final ArrayList<Task> tasks = new ArrayList<>();
+    private final ArrayList<String> history = new ArrayList<>();
+    private final Alignment alignment = new Alignment();
 
     private static final int[] levels = {
             0, 300, 900, 2700, 6500, 14000, 23000, 34000,
@@ -47,8 +48,16 @@ public class Person {
         this(t, Weight.weightedChoice(Race::getChance, Race.values()));
     }
 
-    public Person(Town t, Race r) {
-        this(t, tables.getLastName(t, r), r.getRandomAge(), r);
+    private Person(Town t, Race r) {
+        this(t, r.getRandomAge(), r);
+    }
+
+    public Person(Town t, int age) {
+        this(t, age, Weight.weightedChoice(Race::getChance, Race.values()));
+    }
+
+    public Person(Town t, int age, Race r) {
+        this(t, tables.getLastName(t, r), age, r);
     }
 
     public Person(Town t, String last, int age, Race r) {
@@ -56,10 +65,6 @@ public class Person {
         race = r;
         this.last = last;
         this.months = age * 12;
-        for (int i = 0; i < taskWeights.length; i++) {
-            taskWeights[i] = rand.nextDouble() * (rand.nextBoolean() ? -1 : 1);
-            taskWeights[i] = Math.pow(vars.get(TASK_WEIGHT), taskWeights[i]);
-        }
         level = 1;
         if (age > 20) level += rand.nextInt(5);
         xp = levels[level];
@@ -82,14 +87,22 @@ public class Person {
         tasks.remove(t);
     }
 
+    private boolean canAdd(Task t) {
+        return !t.isUnique() || canAdd(t.getClass());
+    }
+
+    public boolean canAdd(Class<? extends Task> clazz) {
+        return tasks.stream().noneMatch(t -> t.isUnique() && clazz.isInstance(t));
+    }
+
     public void update() {
-        if (getAge() >= 10 && town != null) {
-            while (rand.nextDouble() < vars.get(TASK_CHANCE) / (tasks.size() + 1)) {
+        if (getAge() >= 15 && town != null) {
+            while (rand.nextDouble() * vars.get(TASK_CHANCE) - tasks.size() > 0) {
                 Task t = Weight.weightedChoice(this::taskAddWeight,
                         () -> Stream.concat(
                                 Arrays.stream(taskMan.tasks()),
                                 town.jobs(this)
-                        ).filter(t1 -> !tasks.contains(t1)));
+                        ).filter(this::canAdd));
                 if (t != null) addTask(t);
                 else break;
             }
@@ -114,13 +127,15 @@ public class Person {
 
     public void work() {
         for (int i = 0; !dead && !tasks.isEmpty() && i < vars.get(TASKS); i++) {
-            Task t = Weight.weightedChoice(this::taskWorkWeight, tasks);
-            if (t != null) {
-                record("Working on " + t);
-                if (t.work(this)) {
-                    t.people().forEach(p -> p.record("Completed " + t));
-                    t.end();
-                }
+            workOn(Weight.weightedChoice(this::taskWorkWeight, tasks));
+        }
+    }
+    public void workOn(Task t) {
+        if (t != null) {
+            record("Working on " + t);
+            if (t.work(this)) {
+                t.people().forEach(p -> p.record("Completed " + t));
+                t.end();
             }
         }
     }
@@ -141,7 +156,7 @@ public class Person {
         return relationships.get(p);
     }
 
-    public void interact(Person p, double mean, double stdev) {
+    private void interact(Person p, double mean, double stdev) {
         if (p != this) changeRel(p, rand.nextGaussian() * stdev
                 + mean
                 + (getRel(p)
@@ -156,7 +171,7 @@ public class Person {
     }
 
     private void changeRel(Person p, double delta) {
-        relationships.put(p, (getRel(p) + delta) / 2);
+        relationships.put(p, (getRel(p) + delta) / 1.8);
     }
 
     public void marry(Person p) {
@@ -206,15 +221,16 @@ public class Person {
         stats.set(s, val);
     }
 
-    public double taskWeight(Task t) {
-        return taskWeights[t.getID()];
+    private double taskWeight(Task t) {
+        return 1;
+        //TODO
     }
 
-    public double taskAddWeight(Task t) {
+    private double taskAddWeight(Task t) {
         return t.getAddWeight(this) * taskWeight(t);
     }
 
-    public double taskWorkWeight(Task t) {
+    private double taskWorkWeight(Task t) {
         return t.getWorkWeight(this) * taskWeight(t);
     }
 
@@ -261,5 +277,10 @@ public class Person {
 
     public void setAttack(String attack) {
         this.attack = new Dice(attack);
+    }
+
+    @Override
+    public Type getType() {
+        return Type.PERSON;
     }
 }

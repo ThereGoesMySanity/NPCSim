@@ -1,9 +1,10 @@
 package util;
 
+import java.io.Serializable;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
-public class Time {
+public class Time implements Serializable {
     private YearMonth time;
     private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("LLLL u");
 

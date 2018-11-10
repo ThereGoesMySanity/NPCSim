@@ -1,25 +1,23 @@
 package ui;
 
 import main.Main;
-import tasks.Task;
-import ui.map.MapPane;
-import ui.map.TaskPane;
+import ui.map.MapPanel;
+import ui.map.SkipDialog;
 import ui.vars.VariablePane;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.awt.event.ActionListener;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainWindow extends JFrame {
-    private ArrayList<TaskPane> pins = new ArrayList<>();
-    private TaskPane taskPane;
-    private JTabbedPane tabbedPane;
-    private JPopupMenu menu;
-    private Component tab;
-    private boolean visible = false;
+    private final JLabel lblTime;
+    private SkipDialog skip;
+    private final MapPanel mapPanel;
+    private ActionListener stop;
+    private ActionListener start;
+    private final AtomicBoolean running;
 
     /**
      * Launch the application.
@@ -53,82 +51,88 @@ public class MainWindow extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        menu = new JPopupMenu();
-        JMenuItem pin = new JMenuItem("Pin");
-        pin.addActionListener(a -> pin());
-        JMenuItem unpin = new JMenuItem("Unpin");
-        unpin.addActionListener(a -> unpin((TaskPane) tab));
-        menu.add(pin);
-        menu.add(unpin);
-
-        tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON3) {
-                    int i = tabbedPane.getUI().tabForCoordinate(tabbedPane, e.getX(), e.getY());
-                    tab = tabbedPane.getComponentAt(i);
-                    if (taskPane.equals(tab)) {
-                        pin.setVisible(true);
-                        unpin.setVisible(false);
-                    } else //noinspection SuspiciousMethodCalls
-                        if (pins.contains(tab)) {
-                        pin.setVisible(false);
-                        unpin.setVisible(true);
-                    } else {
-                        return;
-                    }
-                    menu.show(tabbedPane, e.getX(), e.getY());
-                }
-            }
-        });
+        JTabbedPane tabbedPane = new JTabbedPane();
         contentPane.add(tabbedPane, BorderLayout.CENTER);
-        MapPane mapPane = new MapPane(this, main);
-        tabbedPane.addTab("Towns", mapPane);
-        VariablePane varPane = new VariablePane();
+
+        mapPanel = new MapPanel(main);
+        tabbedPane.addTab("Towns", mapPanel);
+        VariablePane varPane = new VariablePane(Main.vars);
         tabbedPane.addTab("Variables", varPane);
-        taskPane = new TaskPane();
+
+        JPanel buttonPanel = new JPanel();
+        add(buttonPanel, BorderLayout.SOUTH);
+        buttonPanel.setLayout(new GridLayout(0, 3, 0, 0));
+
+        JPanel north = new JPanel();
+        add(north, BorderLayout.NORTH);
+
+        JButton btnStep = new JButton("Step");
+        btnStep.addActionListener(a -> update());
+        buttonPanel.add(btnStep);
+
+        JButton btnStepX = new JButton("Skip to...");
+        btnStepX.addActionListener(a -> update(skip.getResult()));
+        buttonPanel.add(btnStepX);
+        running = new AtomicBoolean(false);
+        JButton btnStepWhile = new JButton("Start");
+
+        start = e -> {
+            running.set(true);
+            btnStepWhile.setText("Stop");
+            new Thread(() -> mapPanel.main.update(running::get)).start();
+            btnStepWhile.removeActionListener(start);
+            btnStepWhile.addActionListener(stop);
+        };
+        stop = e -> {
+            running.set(false);
+            refresh();
+            btnStepWhile.setText("Start");
+            btnStepWhile.removeActionListener(stop);
+            btnStepWhile.addActionListener(start);
+        };
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu file = new JMenu("File");
+        menuBar.add(file);
+
+        JMenuItem save = new JMenuItem("Save...");
+        save.addActionListener(a -> mapPanel.save());
+        file.add(save);
+
+        JMenuItem load = new JMenuItem("Load...");
+        load.addActionListener(a -> {
+            mapPanel.load();
+            reload();
+        });
+        file.add(load);
+
+        setJMenuBar(menuBar);
+
+        btnStepWhile.addActionListener(start);
+        buttonPanel.add(btnStepWhile);
+
+        lblTime = new JLabel("Time");
+        north.add(lblTime);
+
+        skip = new SkipDialog(Main.time, this);
+        refresh();
     }
 
-    public void addTaskPane(Task t) {
-        if (pins.stream().allMatch(p -> p.getTask() != t)) {
-            Main.taskMan.panes.remove(taskPane.getTask());
-            taskPane.setTask(t);
-            if (t != null) {
-                Main.taskMan.panes.put(t, taskPane);
-                tabbedPane.addTab(t.toString(), taskPane);
-                setTaskPane(taskPane);
-            }
-        } else {
-            tabbedPane.remove(taskPane);
-            visible = false;
-        }
+    private void update() {
+        mapPanel.main.update();
+        refresh();
+    }
+    private void update(int num) {
+        mapPanel.main.update(num);
+        refresh();
     }
 
-    private void setTaskPane(TaskPane t) {
-        taskPane = t;
-        visible = true;
+    private void refresh() {
+        mapPanel.refresh();
+        lblTime.setText(Main.time.toString());
     }
-
-    private void pin() {
-        pins.add(taskPane);
-        taskPane = new TaskPane();
-        visible = false;
+    private void reload() {
+        mapPanel.reload();
+        refresh();
     }
-
-    private void unpin(TaskPane t) {
-        pins.remove(t);
-        if (!visible) setTaskPane(t);
-        else {
-            tabbedPane.remove(t);
-            Main.taskMan.panes.remove(t.getTask());
-        }
-    }
-
-    public void update() {
-        pins.forEach(TaskPane::update);
-        taskPane.update();
-    }
-
 }

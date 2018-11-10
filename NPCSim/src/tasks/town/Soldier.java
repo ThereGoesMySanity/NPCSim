@@ -20,7 +20,13 @@ public class Soldier extends TownTask {
 
     @Override
     protected double weightSub(Person p) {
-        return p.level / 5. + 1;
+        return (p.level - 2) / 5. + 1;
+    }
+
+    @Override
+    public double getWorkWeight(Person p) {
+        if(!p.canAdd(Fight.class)) return 0;
+        return super.getWorkWeight(p);
     }
 
     @Override
@@ -31,8 +37,10 @@ public class Soldier extends TownTask {
 
     @Override
     public boolean work(Person p) {
-        Fight monster = p.getTown().getRandomTask(Fight.class);
-        if(monster != null && !p.getTasks().contains(monster)) p.addTask(monster);
+        if(p.canAdd(Fight.class)) {
+            Fight monster = p.getTown().getRandomTask(Fight.class);
+            if (monster != null) p.addTask(monster);
+        }
         return false;
     }
 

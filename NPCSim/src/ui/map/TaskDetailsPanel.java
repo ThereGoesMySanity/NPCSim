@@ -7,18 +7,18 @@ import util.Convert;
 import javax.swing.*;
 import java.awt.*;
 
-public class TaskPane extends JPanel {
-    private JList<Person> people;
+public class TaskDetailsPanel extends JPanel implements DetailsPanel {
+    private final JList<Person> people;
     private Task task;
-    private JTabbedPane tabbedPane;
+    private final JTabbedPane tabbedPane;
     private int labelIndex;
-    private JPanel mainPanel;
+    private final JPanel mainPanel;
     private JLabel nameLabel;
 
     /**
      * Create the panel.
      */
-    public TaskPane() {
+    public TaskDetailsPanel(MapPanel mapPanel) {
         setLayout(new BorderLayout(0, 0));
 
         mainPanel = new JPanel();
@@ -34,16 +34,14 @@ public class TaskPane extends JPanel {
         JScrollPane peopleScroll = new JScrollPane();
         tabbedPane.addTab("People", null, peopleScroll, null);
 
-        people = new JList<Person>();
+        people = new JList<>();
+        people.addListSelectionListener(mapPanel.listener);
         peopleScroll.setViewportView(people);
     }
 
-    public Task getTask() {
-        return task;
-    }
-
-    public void setTask(Task t) {
-        task = t;
+    @Override
+    public void setObject(DetailsObject t) {
+        task = (Task) t;
         if (t == null) return;
         for (int i = 1; i < tabbedPane.getTabCount(); i++) {
             tabbedPane.removeTabAt(i);
@@ -52,11 +50,12 @@ public class TaskPane extends JPanel {
         labelIndex = 0;
         nameLabel = new JLabel(task.toString());
         addLabel(nameLabel);
-        t.addToPane(this);
-        update();
+        task.addToPane(this);
+        refresh();
     }
 
-    public void update() {
+    @Override
+    public void refresh() {
         if (task != null) {
             task.updatePane();
             nameLabel.setText(task.toString());
@@ -64,17 +63,37 @@ public class TaskPane extends JPanel {
         }
     }
 
+    @Override
+    public Component toComponent() {
+        return this;
+    }
+
+    @Override
+    public DetailsPanel newInstance(MapPanel mapPanel) {
+        return new TaskDetailsPanel(mapPanel);
+    }
+
     public void addLabel(JLabel... labels) {
-        for (JLabel label : labels) {
+        for(int i = 0; i < labels.length; i++) {
             GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = 0;
+            gbc.gridx = i;
             gbc.gridy = labelIndex;
-            mainPanel.add(label, gbc);
+            mainPanel.add(labels[i], gbc);
         }
         labelIndex++;
     }
 
-    public JTabbedPane getTabs() {
-        return tabbedPane;
+    public void addTab(String title, Component comp) {
+        tabbedPane.addTab(title, comp);
+    }
+
+    @Override
+    public Task getObject() {
+        return task;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.TASK;
     }
 }

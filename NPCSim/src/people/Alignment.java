@@ -2,20 +2,22 @@ package people;
 
 import util.Weight;
 
-public class Alignment {
+import java.io.Serializable;
+
+public class Alignment implements Serializable {
     public enum LNC {LAWFUL, NEUTRAL, CHAOTIC}
 
     public enum GNE {GOOD, NEUTRAL, EVIL}
 
-    private LNC lnc;
-    private GNE gne;
+    private final LNC lnc;
+    private final GNE gne;
     private String str;
 
-    public Alignment() {
+    Alignment() {
         this(Weight.choose(LNC.values()), Weight.choose(GNE.values()));
     }
 
-    public Alignment(LNC a, GNE b) {
+    private Alignment(LNC a, GNE b) {
         lnc = a;
         gne = b;
         setStr();
@@ -24,7 +26,6 @@ public class Alignment {
     public boolean is(LNC a) {
         return lnc.equals(a);
     }
-
     public boolean is(GNE a) {
         return gne.equals(a);
     }

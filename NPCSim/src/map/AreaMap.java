@@ -1,9 +1,10 @@
 package map;
 
+import java.io.Serializable;
 import java.util.stream.Stream;
 
-public class AreaMap {
-    private MapData data = new MapData();
+public class AreaMap implements Serializable {
+    private final MapData data = new MapData();
 
     public void update() {
         data.stream().forEach(Town::update);

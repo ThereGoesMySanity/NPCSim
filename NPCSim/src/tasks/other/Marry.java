@@ -11,7 +11,7 @@ import static main.Main.vars;
 import static util.Variables.Doubles.MARRIAGE_WEIGHT;
 
 public class Marry extends Task {
-    public Person spouse1, spouse2;
+    private Person spouse1, spouse2;
     private int work;
 
     public Marry(boolean t) {
@@ -81,7 +81,7 @@ public class Marry extends Task {
         spouse2 = person;
         forBoth(p -> p.record(spouse2 + " proposed to " + spouse1 + "!"));
         if (getSpouseCandidate(spouse1) == person
-                && !spouse1.getTasks().stream().anyMatch(Marry.class::isInstance)) {
+                && spouse1.getTasks().stream().noneMatch(Marry.class::isInstance)) {
             forBoth(p -> p.record(spouse1 + " accepted!"));
             spouse1.addTask(this);
         } else {
@@ -90,12 +90,12 @@ public class Marry extends Task {
         }
     }
 
-    public void forBoth(Consumer<Person> c) {
+    private void forBoth(Consumer<Person> c) {
         c.accept(spouse1);
         c.accept(spouse2);
     }
 
-    public Person getOther(Person p) {
+    private Person getOther(Person p) {
         if (spouse2.equals(p)) return spouse1;
         return spouse2;
     }

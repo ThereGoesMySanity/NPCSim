@@ -5,7 +5,7 @@ import map.Town;
 import people.Person;
 import tasks.TownTask;
 import things.Monster;
-import ui.map.TaskPane;
+import ui.map.TaskDetailsPanel;
 import util.Convert;
 import util.Weight;
 
@@ -21,9 +21,9 @@ import static util.Variables.Doubles.FIGHT_WEIGHT;
 public class Fight extends TownTask {
     private static final String[] columnNames = {"Person", "HP"};
     private int hp;
-    private Monster monster;
-    private Set<Person> worked = new HashSet<>();
-    private HashMap<Person, Integer> squadHP = new HashMap<>();
+    private final Monster monster;
+    private final Set<Person> worked = new HashSet<>();
+    private final HashMap<Person, Integer> squadHP = new HashMap<>();
     private JTable table;
     private JLabel hpLabel;
 
@@ -43,10 +43,14 @@ public class Fight extends TownTask {
 
     @Override
     public double weightSub(Person p) {
-        return (p.level - 2)
+        return (p.level - monster.getCR())
                 * Math.max(getStatWeight(p, STR), getStatWeight(p, DEX))
-                * vars.get(FIGHT_WEIGHT)
-                / monster.getCR();
+                * vars.get(FIGHT_WEIGHT);
+    }
+
+    @Override
+    public double getWorkWeight(Person p) {
+        return p.level * vars.get(FIGHT_WEIGHT);
     }
 
     @Override
@@ -81,7 +85,6 @@ public class Fight extends TownTask {
                 int newhp = squadHP.get(p) - monster.attack();
                 if (newhp < 0) {
                     p.die("their injuries");
-                    System.out.println("ahhhh");
                 } else {
                     squadHP.put(p, newhp);
                 }
@@ -93,17 +96,16 @@ public class Fight extends TownTask {
     @Override
     public void add(Person p) {
         super.add(p);
-        squadHP.put(p, 2 + (4 + p.getStatMod(CON)) * p.level);
+        squadHP.put(p, 3 + (5 + p.getStatMod(CON)) * p.level);
     }
 
     @Override
-    public void addToPane(TaskPane pane) {
+    public void addToPane(TaskDetailsPanel pane) {
         super.addToPane(pane);
         hpLabel = new JLabel("HP: " + hp);
         pane.addLabel(hpLabel);
-        JTabbedPane jtp = pane.getTabs();
         JScrollPane example = new JScrollPane();
-        jtp.addTab("Squad HP", example);
+        pane.addTab("Squad HP", example);
 
         table = new JTable();
         example.setViewportView(table);

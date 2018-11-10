@@ -2,28 +2,29 @@ package map;
 
 import tasks.town.Farm;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class MapData {
-    private Town[] towns = {
+class MapData implements Serializable {
+    private final Town[] towns = {
             //		 name	           			classes 	startPop 	danger 	monsters/names
             new Town("Northcastle", Map.of(
                     Farm.class, 2
             ), 10, 6, "desert", "mountain"),
             new Fort("Northcastle Keep", Map.of(
-                    Farm.class, 1
+                    Farm.class, 2
             ), 10, 10, "soldier", "desert", "mountain"),
             new Town("Hillborough", Map.of(
-                    Farm.class, 2
+                    Farm.class, 3
             ), 20, 5, "forest", "hill", "grassland"),
             new Town("Oxingford", Map.of(
-                    Farm.class, 3
+                    Farm.class, 4
             ), 20, 4, "grassland", "hill"),
             new Town("Kerenford", Map.of(
-                    Farm.class, 20
+                    Farm.class, 12
             ), 40, 3, "river", "city", "grassland"),
             new Town("Beren", Map.of(
                     Farm.class, 8
@@ -41,10 +42,10 @@ public class MapData {
                     Farm.class, 3
             ), 30, 1, "sea", "underwater", "grassland"),
             new Town("Middenbury", Map.of(
-                    Farm.class, 13
+                    Farm.class, 7
             ), 40, 3, "city", "grassland"),
             new Town("Leandea", Map.of(
-                    Farm.class, 10
+                    Farm.class, 8
             ), 40, 4, "river", "city", "mountain", "grassland"),
             new Town("Amfield", Map.of(
                     Farm.class, 5
@@ -56,7 +57,7 @@ public class MapData {
                     Farm.class, 5
             ), 10, 3, "forest", "grassland"),
             new Town("Casterham", Map.of(
-                    Farm.class, 10
+                    Farm.class, 8
             ), 30, 5, "river", "city", "grassland"),
             new Town("Marisbury", Map.of(
                     Farm.class, 5
@@ -68,11 +69,12 @@ public class MapData {
                     Farm.class, 6
             ), 30, 7, "forest", "city", "desert", "hill"),
             new Fort("Southfort", Map.of(
-                    Farm.class, 1
+                    Farm.class, 3
             ), 10, 10, "forest", "desert", "soldier", "mountain"),
     };
 
-    private String[][] connections = {
+    @SuppressWarnings("FieldCanBeLocal")
+    private final String[][] connections = {
             {"Northcastle Keep", "Northcastle"},
             {"Northcastle", "Hillborough"},
             {"Hillborough", "Oxingford"},
@@ -97,16 +99,16 @@ public class MapData {
             {"Northcastle Keep", "Southfort City"},
             {"Southfort City", "Southfort"},
     };
-    private HashMap<String, Town> names = new HashMap<>(towns.length);
+    private final HashMap<String, Town> names = new HashMap<>(towns.length);
 
-    public Town get(String name) {
+    private Town get(String name) {
         return names.get(name);
     }
-    public void put(Town t) {
+    private void put(Town t) {
         names.put(t.toString(), t);
     }
 
-    public MapData() {
+    MapData() {
         stream().forEach(this::put);
         for (String[] c : connections) {
             get(c[0]).addRoad(get(c[1]));
@@ -118,7 +120,7 @@ public class MapData {
         return Arrays.stream(towns);
     }
 
-    public Town[] towns() {
+    Town[] towns() {
         return towns;
     }
 }

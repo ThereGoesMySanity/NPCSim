@@ -5,8 +5,6 @@ import people.Person;
 import tasks.Task;
 import util.Weight;
 
-import java.util.stream.Collectors;
-
 import static main.Main.rand;
 
 public class Travel extends Task {
@@ -17,7 +15,7 @@ public class Travel extends Task {
     @Override
     protected double weightSub(Person p) {
         if (p.getTown().residents.size() < 5) return 0;
-        else return 0.1;
+        else return 0;
     }
 
     @Override
@@ -42,15 +40,6 @@ public class Travel extends Task {
             p.record("Travelled to " + town);
             return false;
         }
-    }
-
-    @Override
-    public void add(Person p) {
-        super.add(p);
-        p.getTasks().removeAll(p.getTasks().stream()
-                .filter(Task::townTask)
-                .collect(Collectors.toList())
-        );
     }
 
     @Override

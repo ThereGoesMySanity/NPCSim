@@ -2,14 +2,12 @@ package tasks;
 
 import map.Town;
 import people.Person;
-import ui.map.TaskPane;
+import ui.map.TaskDetailsPanel;
 
 import javax.swing.*;
 
 public abstract class TownTask extends Task {
-    private Town town;
-    private JLabel townLabel;
-
+    private final Town town;
 
     protected TownTask(int size, Town t, boolean unique) {
         super(false, size, unique);
@@ -36,18 +34,12 @@ public abstract class TownTask extends Task {
         town.removeTask(this);
     }
 
-    @Override
-    public boolean townTask() {
-        return true;
-    }
-
     public Town getTown() {
         return town;
     }
 
     @Override
-    public void addToPane(TaskPane tp) {
-        townLabel = new JLabel(town.toString());
-        tp.addLabel(townLabel);
+    public void addToPane(TaskDetailsPanel tp) {
+        tp.addLabel(new JLabel(town.toString()));
     }
 }

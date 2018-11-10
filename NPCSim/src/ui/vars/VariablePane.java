@@ -1,6 +1,5 @@
 package ui.vars;
 
-import main.Main;
 import util.Variables;
 import util.Variables.Doubles;
 import util.Variables.Ints;
@@ -19,15 +18,15 @@ public class VariablePane extends JPanel implements ChangeListener, ActionListen
         void reset();
     }
 
-    private Variables vars;
-    private ArrayList<Resetable> sliders = new ArrayList<>();
+    private final Variables vars;
+    private final ArrayList<Resetable> sliders = new ArrayList<>();
 
     /**
      * Create the panel.
      */
-    public VariablePane() {
+    public VariablePane(Variables vars) {
         super(new BorderLayout());
-        this.vars = Main.vars;
+        this.vars = vars;
         int intsSize = Variables.Ints.values().length;
         int doublesSize = Variables.Doubles.values().length;
         JScrollPane scrollPane = new JScrollPane();

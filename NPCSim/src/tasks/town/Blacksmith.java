@@ -4,7 +4,7 @@ import map.Town;
 import people.Person;
 import tasks.TownTask;
 import things.Item;
-import ui.map.TaskPane;
+import ui.map.TaskDetailsPanel;
 import util.Convert;
 
 import javax.swing.*;
@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import static main.Main.tables;
 
 public class Blacksmith extends TownTask {
-    public ArrayList<Item> jobs = new ArrayList<>();
-    public int work;
+    private final ArrayList<Item> jobs = new ArrayList<>();
+    private int work;
     private JList<Item> list;
     private JLabel labelWork;
 
@@ -45,7 +45,7 @@ public class Blacksmith extends TownTask {
         return false;
     }
 
-    public void addJob(Item i) {
+    private void addJob(Item i) {
         jobs.add(i);
     }
 
@@ -59,13 +59,12 @@ public class Blacksmith extends TownTask {
     }
 
     @Override
-    public void addToPane(TaskPane pane) {
+    public void addToPane(TaskDetailsPanel pane) {
         super.addToPane(pane);
         labelWork = new JLabel(work + "");
         pane.addLabel(labelWork);
-        JTabbedPane jtp = pane.getTabs();
         JScrollPane example = new JScrollPane();
-        jtp.addTab("Jobs", null, example, null);
+        pane.addTab("Jobs", example);
 
         list = new JList<>();
         example.setViewportView(list);

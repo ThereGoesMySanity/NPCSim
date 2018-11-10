@@ -1,19 +1,22 @@
 package util;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import static main.Main.rand;
 
-public class Dice {
-    public static class Die {
-        int sign, num, die;
+public class Dice implements Serializable {
+    public static class Die implements Serializable {
+        int sign;
+        final int num;
+        final int die;
 
-        public Die(int s, int n, int d) {
+        Die(int s, int n, int d) {
             num = n;
             die = d;
         }
 
-        public int roll() {
+        int roll() {
             int sum = 0;
             for (int i = 0; i < num; i++) {
                 sum += rand.nextInt(die) + 1;
@@ -21,7 +24,7 @@ public class Dice {
             return sum * sign;
         }
 
-        public static Die parseChunk(String s) {
+        static Die parseChunk(String s) {
             int sign = 1;
             if (s.charAt(0) < '0') {
                 s = s.substring(1);
@@ -35,7 +38,7 @@ public class Dice {
         }
     }
 
-    private Die[] dice;
+    private final Die[] dice;
     private int constant;
 
     public Dice(String s) {

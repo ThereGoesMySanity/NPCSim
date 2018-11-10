@@ -3,7 +3,7 @@ package tasks.town;
 import map.Town;
 import people.Person;
 import tasks.TownTask;
-import ui.map.TaskPane;
+import ui.map.TaskDetailsPanel;
 
 import javax.swing.*;
 
@@ -11,8 +11,9 @@ import static main.Main.rand;
 import static main.Main.tables;
 
 public class Quest extends TownTask {
-    private int progress, difficulty;
-    private String reason;
+    private int progress;
+    private final int difficulty;
+    private final String reason;
     public Quest(Town t) {
         super(5, t);
         difficulty = rand.nextInt(40) + 10;
@@ -38,7 +39,7 @@ public class Quest extends TownTask {
     }
 
     @Override
-    public void addToPane(TaskPane tp) {
+    public void addToPane(TaskDetailsPanel tp) {
         super.addToPane(tp);
         tp.addLabel(new JLabel(reason));
     }

@@ -4,28 +4,32 @@ import main.Main;
 import map.Town;
 import tasks.other.*;
 import tasks.town.*;
-import ui.map.TaskPane;
+import ui.map.TaskDetailsPanel;
 
 import javax.swing.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TaskManager {
+public class TaskManager implements Serializable {
     @SuppressWarnings("unchecked")
-    private final Class<? extends Task>[] taskList = new Class[]{
+    private static final Class<? extends Task>[] taskList = new Class[]{
             Adventurer.class,
             Craft.class,
             Divorce.class,
             Hunt.class,
+            Idle.class,
             Married.class,
             Marry.class,
             Study.class,
             Travel.class,
     };
     @SuppressWarnings("unchecked")
-    private final Class<? extends TownTask>[] townTasks = new Class[] {
+    private static final Class<? extends TownTask>[] townTasks = new Class[] {
             Blacksmith.class,
             College.class,
             Farm.class,
@@ -36,16 +40,15 @@ public class TaskManager {
             Soldier.class,
             Teach.class,
     };
-    private Task[] templates = new Task[taskList.length];
-    public HashMap<Task, TaskPane> panes = new HashMap<>();
-    private ArrayList<Task> activeTasks = new ArrayList<>();
-    private ArrayList<Task> toRemove = new ArrayList<>();
+    private final Task[] templates = new Task[taskList.length];
+    public transient HashMap<Task, TaskDetailsPanel> panes = new HashMap<>();
+    private final ArrayList<Task> activeTasks = new ArrayList<>();
+    private transient ArrayList<Task> toRemove = new ArrayList<>();
 
     public TaskManager() {
         try {
             for (int i = 0; i < templates.length; i++) {
                 templates[i] = taskList[i].getConstructor(boolean.class).newInstance(true);
-                templates[i].setID(i);
             }
         } catch (InstantiationException | IllegalAccessException
                 | InvocationTargetException | NoSuchMethodException e) {
@@ -62,15 +65,7 @@ public class TaskManager {
         else return t;
     }
 
-    private Task newTask(int i) {
-        return newTask(taskList[i]);
-    }
-
-    private TownTask newTask(int i, Town t) {
-        return newTask(townTasks[i], t);
-    }
-
-    public <T extends Task> T newTask(Class<T> clazz, Town t) {
+    private <T extends Task> T newTask(Class<T> clazz, Town t) {
         try {
             return newTaskFinal(clazz.getConstructor(Town.class).newInstance(t));
         } catch (InstantiationException | IllegalAccessException
@@ -96,8 +91,8 @@ public class TaskManager {
 
     void endTask(Task t) {
         if (panes.containsKey(t)) {
-            TaskPane pane = panes.get(t);
-            pane.update();
+            TaskDetailsPanel pane = panes.get(t);
+            pane.refresh();
             pane.addLabel(new JLabel("Ended " + Main.time));
         }
         toRemove.add(t);
@@ -127,7 +122,9 @@ public class TaskManager {
         removeAll();
     }
 
-    public int tasksSize() {
-        return townTasks.length + taskList.length;
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        toRemove = new ArrayList<>();
+        panes = new HashMap<>();
+        in.defaultReadObject();
     }
 }

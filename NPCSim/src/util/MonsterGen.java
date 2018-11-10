@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class MonsterGen {
-    private HashMap<String, Monster[]> monsters = new HashMap<>();
+    private final HashMap<String, Monster[]> monsters = new HashMap<>();
     public MonsterGen() {
         Supplier<Stream<String>> ss = () -> {
             try {
@@ -24,7 +24,7 @@ public class MonsterGen {
             return null;
         };
         HashMap<String, ArrayList<Monster>> mons = new HashMap<>();
-        String[] headers = ss.get().findFirst().get().split("\t");
+        String[] headers = ss.get().findFirst().orElse("").split("\t");
         Arrays.stream(headers, 13, headers.length).map(String::toLowerCase)
                 .forEach(h -> mons.put(h, new ArrayList<Monster>()));
         ss.get().skip(1)

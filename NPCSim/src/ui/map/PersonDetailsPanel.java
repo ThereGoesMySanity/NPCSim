@@ -5,33 +5,34 @@ import map.Town;
 import people.Person;
 import people.Stats.Stat;
 import tasks.Task;
-import ui.MainWindow;
 import util.Convert;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class PersonDetailsPanel extends JPanel {
+public class PersonDetailsPanel extends JPanel implements DetailsPanel {
     private static final String[] relationsColumns = {"Person", "Relation"};
     private Person person;
-    private JTextField name;
-    private JTextField xp;
-    private JTable stats;
-    private JTable relationsTable;
-    private JComboBox<Town> town;
-    private JList<String> history;
-    private JList<Task> tasks;
-    private JLabel level;
-    private JLabel alignment;
-    private JLabel age;
-    private JLabel race;
-    private JLabel spouse;
-    private JEditorPane notes;
+    private final JTextField name;
+    private final JTextField xp;
+    private final JTable stats;
+    private final JTable relationsTable;
+    private final JComboBox<Town> town;
+    private final JList<String> history;
+    private final JList<Task> tasks;
+    private final JLabel level;
+    private final JLabel alignment;
+    private final JLabel age;
+    private final JLabel race;
+    private final JLabel spouse;
+    private final JEditorPane notes;
+    private final AreaMap map;
 
     /**
      * Create the panel.
      */
-    PersonDetailsPanel(MainWindow mw, AreaMap map) {
+    PersonDetailsPanel(MapPanel mapPanel, AreaMap map) {
+        this.map = map;
         setLayout(new BorderLayout(0, 0));
 
         JPanel panel = new JPanel();
@@ -43,7 +44,7 @@ public class PersonDetailsPanel extends JPanel {
         panel.add(btnSave);
 
         JButton btnReset = new JButton("Reset");
-        btnReset.addActionListener(a -> update());
+        btnReset.addActionListener(a -> refresh());
         panel.add(btnReset);
 
         JPanel infoPanel = new JPanel();
@@ -178,7 +179,7 @@ public class PersonDetailsPanel extends JPanel {
         add(tabbedPane, BorderLayout.EAST);
 
         tasks = new JList<>();
-        tasks.addListSelectionListener(e -> mw.addTaskPane(tasks.getSelectedValue()));
+        tasks.addListSelectionListener(mapPanel.listener);
         JScrollPane tasksScroll = new JScrollPane(tasks);
         tasksScroll.setPreferredSize(tasks.getPreferredSize());
         tabbedPane.addTab("Tasks", null, tasksScroll, null);
@@ -224,9 +225,10 @@ public class PersonDetailsPanel extends JPanel {
         relations.add(relationsScroll, BorderLayout.CENTER);
     }
 
-    public void setPerson(Person p) {
-        person = p;
-        update();
+    @Override
+    public void setObject(DetailsObject o) {
+        person = (Person) o;
+        refresh();
     }
 
     private void commit() {
@@ -240,10 +242,11 @@ public class PersonDetailsPanel extends JPanel {
         person.setNotes(notes.getText());
     }
 
-    public void update() {
+    @Override
+    public void refresh() {
         if (person != null) {
             Convert.listToJList(person.getHistory(), history);
-            Convert.listToJList(person.getTasks(), tasks);
+            Convert.listToJList(person.getTasks(), tasks, t -> t.toString(person));
             Convert.mapToTable(person.relationships, relationsTable, relationsColumns);
             town.setSelectedItem(person.getTown());
             stats.setModel(person.stats);
@@ -257,5 +260,25 @@ public class PersonDetailsPanel extends JPanel {
             if (person.spouse != null) spouse.setText(person.spouse.toString());
             else spouse.setText("None");
         }
+    }
+
+    @Override
+    public Person getObject() {
+        return person;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.PERSON;
+    }
+
+    @Override
+    public Component toComponent() {
+        return this;
+    }
+
+    @Override
+    public DetailsPanel newInstance(MapPanel mapPanel) {
+        return new PersonDetailsPanel(mapPanel, map);
     }
 }

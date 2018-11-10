@@ -5,13 +5,15 @@ import people.Person;
 import tasks.TownTask;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static main.Main.tables;
 import static people.Stats.Stat.INT;
 
 public class College extends TownTask {
-    private String name;
-    private HashMap<Person, Integer> work = new HashMap<>();
+    private final String name;
+    private final HashMap<Person, Integer> work = new HashMap<>();
+    private final HashSet<Person> alumni = new HashSet<>();
     public College(Town t) {
         super(t);
         name = tables.chooseName("college").replace("Town", t.toString());
@@ -25,6 +27,7 @@ public class College extends TownTask {
 
     @Override
     protected double weightSub(Person p) {
+        if(alumni.contains(p)) return 0;
         return getStatWeight(p, INT);
     }
 
@@ -33,7 +36,7 @@ public class College extends TownTask {
         int progress = work.get(p) + 1;
         work.put(p, progress);
         if(progress > 48) {
-            p.setStat(INT, p.getStat(INT) + 2);
+            p.setStat(INT, p.getStat(INT) + 1);
             p.removeTask(this);
         }
         return false;
@@ -43,6 +46,7 @@ public class College extends TownTask {
     public void remove(Person p) {
         super.remove(p);
         work.remove(p);
+        alumni.add(p);
     }
 
     @Override

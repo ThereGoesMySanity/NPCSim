@@ -46,11 +46,6 @@ public class Married extends Task {
     }
 
     @Override
-    public void add(Person p) {
-        super.add(p);
-    }
-
-    @Override
     public void updatePost() {
     }
 }

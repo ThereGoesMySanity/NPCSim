@@ -13,12 +13,11 @@ import java.awt.event.ActionListener;
 
 public class SkipDialog extends JDialog implements ChangeListener, ActionListener {
     private final int WIDTH = 256, HEIGHT = 128;
-    private final JPanel contentPanel = new JPanel();
-    private JLabel lblTime;
-    private JSlider slider;
-    private Time time;
+    private final JLabel lblTime;
+    private final JSlider slider;
+    private final Time time;
     private int value;
-    private MainWindow mw;
+    private final MainWindow mw;
 
     /**
      * Create the dialog.
@@ -29,6 +28,7 @@ public class SkipDialog extends JDialog implements ChangeListener, ActionListene
         this.mw = mw;
         setBounds(0, 0, WIDTH, HEIGHT);
         getContentPane().setLayout(new BorderLayout());
+        JPanel contentPanel = new JPanel();
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));

@@ -2,20 +2,22 @@ package tasks;
 
 import people.Person;
 import people.Stats.Stat;
-import ui.map.TaskPane;
+import ui.map.TaskDetailsPanel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import static main.Main.taskMan;
 import static main.Main.vars;
+import static ui.map.DetailsPanel.DetailsObject;
+import static ui.map.DetailsPanel.Type;
 import static util.Variables.Doubles.TASK_MOD_WEIGHT;
 
-public abstract class Task {
-    private boolean template;
-    private ArrayList<Person> participants = new ArrayList<>();
-    private int maxSize;
-    private int id;
-    private boolean unique;
+public abstract class Task implements DetailsObject, Serializable {
+    private final boolean template;
+    private final ArrayList<Person> participants = new ArrayList<>();
+    private final int maxSize;
+    private final boolean unique;
 
     public Task(boolean temp, int size) {
         this(temp, size, true);
@@ -48,22 +50,22 @@ public abstract class Task {
 
     public void end() {
         taskMan.endTask(this);
-        ArrayList<Person> pr = participants;
-        participants = new ArrayList<Person>();
+        ArrayList<Person> pr = new ArrayList<>(participants);
+        participants.clear();
         pr.forEach(p -> p.removeTask(this));
     }
 
-    public void groupInteract(double mean, double stdev) {
+    protected void groupInteract(double mean, double stdev) {
         participants.stream()
                 .flatMap(p -> participants.stream().map(p1 -> new Person[]{p, p1}))
                 .forEach(p -> Person.interact(p[0], p[1], mean, stdev));
     }
 
-    public boolean isTemplate() {
+    boolean isTemplate() {
         return template;
     }
 
-    public double getStatWeight(Person p, Stat s) {
+    protected double getStatWeight(Person p, Stat s) {
         return Math.pow(vars.get(TASK_MOD_WEIGHT), p.getStatMod(s));
     }
 
@@ -79,18 +81,6 @@ public abstract class Task {
         else return weightSub(p);
     }
 
-    public int getID() {
-        return id;
-    }
-
-    protected void setID(int id) {
-        this.id = id;
-    }
-
-    public boolean townTask() {
-        return false;
-    }
-
     @Override
     public String toString() {
         return getClass().getSimpleName();
@@ -100,11 +90,17 @@ public abstract class Task {
         return toString() + " (" + getWorkWeight(p) + ")";
     }
 
-    public void addToPane(TaskPane pane) {
+    public boolean isUnique() {
+        return unique;
     }
 
-    public void updatePane() {
-    }
+
+    public void addToPane(TaskDetailsPanel pane) { }
+
+    public void updatePane() { }
+
+    @Override
+    public Type getType() {return Type.TASK;}
 
     /**
      * Override to return the add/work weight of the given task.

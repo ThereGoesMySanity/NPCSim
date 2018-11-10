@@ -36,7 +36,7 @@ public class Socialize extends TownTask {
         StringBuilder sb = new StringBuilder("Socialize");
         if (people().size() > 0) {
             sb.append(" with ");
-            people().forEach(p -> sb.append(p + ", "));
+            people().forEach(p -> sb.append(p).append(", "));
             sb.setLength(sb.length() - 2);
         }
         return sb.toString();

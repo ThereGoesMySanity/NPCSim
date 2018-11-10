@@ -1,14 +1,16 @@
 package things;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Item implements Comparable<Item> {
-    private static Pattern p = Pattern.compile("(.*?)(?: \\((\\d+)\\))?\\t(\\d+)");
-    private int value, quantity;
-    private String name;
+public class Item implements Comparable<Item>, Serializable {
+    private static final Pattern p = Pattern.compile("(.*?)(?: \\((\\d+)\\))?\\t(\\d+)");
+    private final int value;
+    private final int quantity;
+    private final String name;
 
-    public Item(String s, int q, int val) {
+    private Item(String s, int q, int val) {
         name = s;
         value = val;
         quantity = q;

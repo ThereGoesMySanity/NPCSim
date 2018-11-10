@@ -1,14 +1,13 @@
 package people;
 
 import javax.swing.table.AbstractTableModel;
+import java.io.Serializable;
 
 import static main.Main.rand;
 
-public class Stats extends AbstractTableModel {
+public class Stats extends AbstractTableModel implements Serializable {
     public enum Stat {STR, DEX, CON, INT, WIS, CHA}
-
-    ;
-    private int[] stats;
+    private final int[] stats;
 
     public Stats() {
         stats = new int[6];
@@ -17,7 +16,7 @@ public class Stats extends AbstractTableModel {
         }
     }
 
-    public int genStat() {
+    private int genStat() {
         return (int) (Math.round(rand.nextGaussian() * 2.5) + 10);
     }
 
@@ -25,7 +24,7 @@ public class Stats extends AbstractTableModel {
         return stats[s.ordinal()];
     }
 
-    public int getMod(Stat s) {
+    int getMod(Stat s) {
         return stats[s.ordinal()] / 2 - 5;
     }
 

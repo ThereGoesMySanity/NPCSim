@@ -2,10 +2,12 @@ package util;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
 public class Convert {
     public static <K, V> void mapToTable(Map<K, V> map, JTable t, String[] columnNames) {
@@ -25,7 +27,7 @@ public class Convert {
     }
 
     public static <T> void listToJList(List<T> list, JList<T> jlist) {
-        jlist.setModel(new AbstractListModel<T>() {
+        jlist.setModel(new AbstractListModel<>() {
             @Override
             public int getSize() {
                 return list.size();
@@ -34,6 +36,15 @@ public class Convert {
             @Override
             public T getElementAt(int index) {
                 return list.get(index);
+            }
+        });
+    }
+    public static <T> void listToJList(List<T> list, JList<T> jlist, Function<T, String> map) {
+        listToJList(list, jlist);
+        jlist.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    return super.getListCellRendererComponent(list, map.apply((T) value), index, isSelected, cellHasFocus);
             }
         });
     }

@@ -6,33 +6,40 @@ import tasks.TownTask;
 import tasks.town.*;
 import util.Weight;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Stream;
 
 import static main.Main.*;
 import static people.Stats.Stat.CON;
+import static ui.map.DetailsPanel.DetailsObject;
+import static ui.map.DetailsPanel.Type;
 import static util.Variables.Ints.MONSTER_CHANCE;
+import static util.Variables.Ints.SPAWN_WEIGHT;
 
-public class Town {
+public class Town implements DetailsObject, Serializable {
     public interface Listener {
         void onAdd(Person p);
-
         void onRemove(Person p);
     }
 
-    public Set<Person> residents = new HashSet<>();
-    private Set<Person> travellers = new HashSet<>();
-    private ArrayList<Town> roads = new ArrayList<>();
-    private ArrayList<Task> jobs = new ArrayList<>();
-    private ArrayList<Listener> listeners = new ArrayList<>();
-    private String name;
+    public final Set<Person> residents = new HashSet<>();
+    private final Set<Person> travellers = new HashSet<>();
+    private final ArrayList<Town> roads = new ArrayList<>();
+    private final ArrayList<Task> jobs = new ArrayList<>();
+    private transient ArrayList<Listener> listeners = new ArrayList<>();
+    private final String name;
     public int food;
-    public int danger;
-    private String[] surnames;
+    public final int danger;
+    private final int startPop;
+    private final String[] surnames;
 
     public Town(String name, Map<Class<? extends TownTask>, Integer> classMap, int startPop, int danger,
                 String... surnames) {
         this.name = name;
+        this.startPop = startPop;
         this.surnames = surnames;
         this.danger = danger;
         for (int i = 0; i < startPop; i++) { //populate
@@ -56,6 +63,8 @@ public class Town {
     }
 
     public void update() {
+        if(rand.nextInt(vars.get(SPAWN_WEIGHT) * 10 / startPop) == 0
+                || residents.size() < 5) residents.add(new Person(this, 15));
         taskMan.addTasks(this, Map.of(
                 Socialize.class, rand.nextInt(residents.size() / 10 + 1),
                 Fight.class, rand.nextInt(10 * vars.get(MONSTER_CHANCE)) < danger? 1 : 0
@@ -67,6 +76,7 @@ public class Town {
             food = 0;
         }
         List<Person> temp = new ArrayList<>(residents);
+        temp.addAll(travellers);
         temp.forEach(Person::update);
         temp.forEach(Person::work);
     }
@@ -80,7 +90,7 @@ public class Town {
         return (double) residents.size() * 120 / food;
     }
 
-    public void addRoad(Town t) {
+    void addRoad(Town t) {
         roads.add(t);
     }
 
@@ -103,8 +113,15 @@ public class Town {
         residents.remove(p);
         travellers.remove(p);
         listeners.forEach(l -> l.onRemove(p));
+        p.getTasks().removeIf(jobs::contains);
         p.setTown(null);
     }
+
+    @Override
+    public Type getType() {
+        return Type.TOWN;
+    }
+
 
     public void addListener(Listener pl) {
         listeners.add(pl);
@@ -135,7 +152,7 @@ public class Town {
         else return jobs.stream();
     }
 
-    public Stream<Task> jobs() {
+    private Stream<Task> jobs() {
         return jobs.stream();
     }
 
@@ -158,6 +175,11 @@ public class Town {
 
     public List<Task> getTasks() {
         return jobs;
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        listeners = new ArrayList<>();
     }
 
 }

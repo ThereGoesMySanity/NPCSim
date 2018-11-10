@@ -8,8 +8,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class Generator {
-    public ArrayList<Map.Entry<String, String[]>> tables = new ArrayList<>(); //poor man's hashmap
-    public Generator(Path p) {
+    private final ArrayList<Map.Entry<String, String[]>> tables = new ArrayList<>(); //poor man's hashmap
+    Generator(Path p) {
         try {
             Iterator<String> iter = Files.lines(p).iterator();
             String s = iter.next();

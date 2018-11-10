@@ -10,8 +10,8 @@ public class TreePath {
     }
 
     public static class Node<T extends Children<T>> {
-        private T value;
-        private Node<T> parent;
+        private final T value;
+        private final Node<T> parent;
 
         public Node(T v, Node<T> p) {
             value = v;
@@ -30,7 +30,7 @@ public class TreePath {
     public static <T extends Children<T>> List<T> shortestPath(T start, T end) {
         Set<T> checked = new HashSet<>();
         List<Node<T>> next, current = new ArrayList<>();
-        current.add(new Node<T>(start, null));
+        current.add(new Node<>(start, null));
         Node<T> last = null;
         int len = 0;
         while (last == null) {
@@ -44,7 +44,7 @@ public class TreePath {
                     checked.add(p.value());
                     p.value().children()
                             .filter(p1 -> !checked.contains(p1))
-                            .map(n -> new Node<T>(n, p))
+                            .map(n -> new Node<>(n, p))
                             .forEach(next::add);
                 }
             }

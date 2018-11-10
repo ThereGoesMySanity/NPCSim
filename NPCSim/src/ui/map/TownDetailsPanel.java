@@ -2,43 +2,39 @@ package ui.map;
 
 import map.Town;
 import tasks.Task;
-import ui.MainWindow;
 import util.Convert;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class TownDetailsPanel extends JPanel {
-    private JList<Task> taskList;
+public class TownDetailsPanel extends JPanel implements DetailsPanel {
+    private final JList<Task> taskList;
     private Town town;
-    private JList<Town> roadList;
-    private JLabel lblTownName;
-    private JLabel lblPopulation;
-    private JLabel lblFood;
-    private JLabel lblDanger;
-    private JList<String> surnames;
-    private JScrollPane roadScroll;
-    private JScrollPane taskScroll;
+    private final JList<Town> roadList;
+    private final JLabel lblTownName;
+    private final JLabel lblPopulation;
+    private final JLabel lblFood;
+    private final JLabel lblDanger;
 
     /**
      * Create the panel.
      *
-     * @param mw
      */
-    public TownDetailsPanel(MainWindow mw) {
+    TownDetailsPanel(MapPanel mapPanel) {
         setLayout(new BorderLayout(0, 0));
 
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         add(tabbedPane, BorderLayout.EAST);
 
-        taskList = new JList<Task>();
-        taskList.addListSelectionListener(e -> mw.addTaskPane(taskList.getSelectedValue()));
-        taskScroll = new JScrollPane(taskList);
+        taskList = new JList<>();
+        taskList.addListSelectionListener(mapPanel.listener);
+        JScrollPane taskScroll = new JScrollPane(taskList);
         taskScroll.setPreferredSize(new Dimension(150, 100));
         tabbedPane.addTab("Tasks", taskScroll);
 
-        roadList = new JList<Town>();
-        roadScroll = new JScrollPane(roadList);
+        roadList = new JList<>();
+        roadList.addListSelectionListener(mapPanel.listener);
+        JScrollPane roadScroll = new JScrollPane(roadList);
         roadScroll.setPreferredSize(new Dimension(150, 100));
         tabbedPane.addTab("Roads", roadScroll);
 
@@ -83,7 +79,7 @@ public class TownDetailsPanel extends JPanel {
         gbc_lblDanger.gridy = 1;
         panel.add(lblDanger, gbc_lblDanger);
 
-        surnames = new JList<>();
+        JList<String> surnames = new JList<>();
         GridBagConstraints gbc_surnames = new GridBagConstraints();
         gbc_surnames.fill = GridBagConstraints.HORIZONTAL;
         gbc_surnames.insets = new Insets(0, 0, 5, 5);
@@ -93,12 +89,14 @@ public class TownDetailsPanel extends JPanel {
 
     }
 
-    public void setTown(Town t) {
-        town = t;
-        update();
+    @Override
+    public void setObject(DetailsObject t) {
+        town = (Town) t;
+        refresh();
     }
 
-    public void update() {
+    @Override
+    public void refresh() {
         if (town != null) {
             Convert.listToJList(town.getTasks(), taskList);
             Convert.listToJList(town.destinations(), roadList);
@@ -108,4 +106,25 @@ public class TownDetailsPanel extends JPanel {
             lblTownName.setText(town.toString());
         }
     }
+
+    @Override
+    public Town getObject() {
+        return town;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.TOWN;
+    }
+
+    @Override
+    public Component toComponent() {
+        return this;
+    }
+
+    @Override
+    public DetailsPanel newInstance(MapPanel mapPanel) {
+        return new TownDetailsPanel(mapPanel);
+    }
+
 }

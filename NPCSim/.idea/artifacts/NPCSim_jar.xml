@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="NPCSim:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/NPCSim_jar</output-path>
+    <root id="archive" name="NPCSim.jar">
+      <element id="module-output" name="NPCSim" />
+    </root>
+  </artifact>
+</component>

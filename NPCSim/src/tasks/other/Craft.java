@@ -4,15 +4,15 @@ import people.Person;
 import tasks.Task;
 import tasks.town.Shop;
 import things.Item;
-import ui.map.TaskPane;
+import ui.map.TaskDetailsPanel;
 
 import javax.swing.*;
 
 import static main.Main.tables;
 
 public class Craft extends Task {
-    Item item;
-    int work;
+    private Item item;
+    private int work;
     private JLabel workLabel;
 
     public Craft(boolean temp) {
@@ -57,7 +57,7 @@ public class Craft extends Task {
     }
 
     @Override
-    public void addToPane(TaskPane pane) {
+    public void addToPane(TaskDetailsPanel pane) {
         workLabel = new JLabel(work + "");
         pane.addLabel(new JLabel("Work:"), workLabel);
     }

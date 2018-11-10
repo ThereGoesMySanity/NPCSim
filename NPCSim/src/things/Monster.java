@@ -3,23 +3,24 @@ package things;
 import util.Dice;
 import util.Weight;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class Monster implements Comparable<Monster> {
+public class Monster implements Comparable<Monster>, Serializable {
     private static final int[] levels = {10, 200, 450, 700, 1100, 1800, 2300, 2900,
             3900, 5000, 5900, 7200, 8400, 10000, 11500, 13000,
             15000, 18000, 20000, 22000, 25000, 33000, 41000, 50000,
             62000, 75000, 90000, 105000, 120000, 135000, 155000
     };
-    float cr;
-    int hp;
-    String name;
-    String[] env;
-    Dice[] attacks;
+    private final float cr;
+    private final int hp;
+    private final String name;
+    private final String[] env;
+    private final Dice[] attacks;
 
-    public Monster(String s, float cr, int hp, String[] env, Dice[] attacks) {
+    private Monster(String s, float cr, int hp, String[] env, Dice[] attacks) {
         name = s;
         this.cr = cr;
         this.hp = hp;

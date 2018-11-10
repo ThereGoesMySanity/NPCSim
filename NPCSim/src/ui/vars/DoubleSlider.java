@@ -6,10 +6,10 @@ import util.Variables.Doubles;
 import javax.swing.*;
 
 public class DoubleSlider extends JSlider implements Resetable {
-    private int resolution;
-    private double max;
-    private Doubles var;
-    private JLabel label;
+    private final int resolution;
+    private final double max;
+    private final Doubles var;
+    private final JLabel label;
 
     public DoubleSlider(JLabel l, Doubles d, double val, int res) {
         super(0, res, res / 2);

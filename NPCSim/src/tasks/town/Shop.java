@@ -4,7 +4,7 @@ import map.Town;
 import people.Person;
 import tasks.TownTask;
 import things.Item;
-import ui.map.TaskPane;
+import ui.map.TaskDetailsPanel;
 import util.Convert;
 
 import javax.swing.*;
@@ -15,7 +15,7 @@ import static people.Stats.Stat.CHA;
 
 public class Shop extends TownTask {
     private static final String[] columnNames = {"Item", "Quantity"};
-    public HashMap<Item, Integer> quantities = new HashMap<>();
+    private final HashMap<Item, Integer> quantities = new HashMap<>();
     private JTable table;
 
     public Shop(Town t) {
@@ -41,19 +41,16 @@ public class Shop extends TownTask {
     }
 
     @Override
-    public void update() {
-    }
+    public void update() {}
 
     @Override
-    public void updatePost() {
-    }
+    public void updatePost() {}
 
     @Override
-    public void addToPane(TaskPane pane) {
+    public void addToPane(TaskDetailsPanel pane) {
         super.addToPane(pane);
-        JTabbedPane jtp = pane.getTabs();
         JScrollPane example = new JScrollPane();
-        jtp.addTab("New tab", null, example, null);
+        pane.addTab("New tab", example);
 
         table = new JTable();
         example.setViewportView(table);

@@ -14,29 +14,30 @@ public class Variables {
         MARRIAGE_WEIGHT,
         FIGHT_WEIGHT,
         MOVE_WEIGHT,
-
     }
 
     public enum Ints {
         TASKS,
-        TIME,
         MONSTER_CHANCE,
+        ADVENTURER_WEIGHT,
+        SPAWN_WEIGHT,
     }
 
-    private EnumMap<Doubles, Double> vars = new EnumMap<>(Doubles.class);
-    private EnumMap<Ints, Integer> varInts = new EnumMap<>(Ints.class);
+    private final EnumMap<Doubles, Double> vars = new EnumMap<>(Doubles.class);
+    private final EnumMap<Ints, Integer> varInts = new EnumMap<>(Ints.class);
 
     public Variables() {
         vars.put(TASK_MOD_WEIGHT, 2.);
         vars.put(CHA_REL_WEIGHT, 1.);
-        vars.put(TASK_CHANCE, 2.);
+        vars.put(TASK_CHANCE, 4.);
         vars.put(TASK_WEIGHT, 1.1);
         vars.put(MARRIAGE_WEIGHT, 0.1);
         vars.put(FIGHT_WEIGHT, 0.1);
         vars.put(MOVE_WEIGHT, 0.1);
+        varInts.put(ADVENTURER_WEIGHT, 20);
+        varInts.put(SPAWN_WEIGHT, 150);
         varInts.put(TASKS, 1);
-        varInts.put(TIME, 150);
-        varInts.put(MONSTER_CHANCE, 3);
+        varInts.put(MONSTER_CHANCE, 5);
     }
 
     public double get(Doubles v) {

@@ -16,10 +16,10 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class Tables {
-    private HashMap<String, String[]> names = new HashMap<>();
-    private HashMap<String, Item[]> items = new HashMap<>();
-    public MonsterGen monsterGen = new MonsterGen();
-    private HashMap<String, Generator> generators = new HashMap<>();
+    private final HashMap<String, String[]> names = new HashMap<>();
+    private final HashMap<String, Item[]> items = new HashMap<>();
+    public final MonsterGen monsterGen = new MonsterGen();
+    private final HashMap<String, Generator> generators = new HashMap<>();
 
     public Tables() {
         try {

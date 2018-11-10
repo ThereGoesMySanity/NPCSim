@@ -6,8 +6,8 @@ import util.Variables.Ints;
 import javax.swing.*;
 
 public class IntSlider extends JSlider implements Resetable {
-    private int orig;
-    private Ints var;
+    private final int orig;
+    private final Ints var;
 
     public IntSlider(Ints i, int value) {
         super(0, value * 2, value);
