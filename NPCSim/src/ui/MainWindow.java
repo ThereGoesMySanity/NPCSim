@@ -3,6 +3,9 @@ package ui;
 import main.Main;
 import ui.map.MapPanel;
 import ui.map.SkipDialog;
+import ui.other.GeneratorPanel;
+import ui.other.NamesPanel;
+import ui.other.SearchPanel;
 import ui.vars.VariablePane;
 
 import javax.swing.*;
@@ -46,18 +49,21 @@ public class MainWindow extends JFrame {
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(new BorderLayout());
         setContentPane(contentPane);
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
         JTabbedPane tabbedPane = new JTabbedPane();
         contentPane.add(tabbedPane, BorderLayout.CENTER);
 
-        mapPanel = new MapPanel(main);
+        SearchPanel searchPanel = new SearchPanel();
+        mapPanel = new MapPanel(main, searchPanel);
         tabbedPane.addTab("Towns", mapPanel);
-        VariablePane varPane = new VariablePane(Main.vars);
-        tabbedPane.addTab("Variables", varPane);
+
+        tabbedPane.addTab("Variables", new VariablePane(Main.vars));
+
+        tabbedPane.addTab("Search", searchPanel);
+
+        tabbedPane.addTab("Generators", new GeneratorPanel());
+
+        tabbedPane.addTab("Names", new NamesPanel());
 
         JPanel buttonPanel = new JPanel();
         add(buttonPanel, BorderLayout.SOUTH);

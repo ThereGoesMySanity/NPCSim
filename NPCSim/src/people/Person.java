@@ -4,8 +4,10 @@ import map.Town;
 import people.Stats.Stat;
 import tasks.Task;
 import util.Dice;
+import util.TreePath;
 import util.Weight;
 
+import javax.swing.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,22 +22,24 @@ import static util.Variables.Doubles.CHA_REL_WEIGHT;
 import static util.Variables.Doubles.TASK_CHANCE;
 import static util.Variables.Ints.TASKS;
 
-public class Person implements DetailsObject, Serializable {
-    private String first, last;
+public class Person implements DetailsObject, Serializable, TreePath.Children<Person> {
     public final Stats stats = new Stats();
+    private boolean dead = false;
+    private String notes = "";
+    private String first, last;
     public int level;
     public int xp;
     public final int gender = rand.nextInt(2);
     private int months;
-    private String notes = "";
     private Town town;
-    public Person spouse;
-    private boolean dead = false;
     private final Race race;
+    public Person spouse;
     private Dice attack = new Dice("1d6");
+    public Icon icon;
     public final HashMap<Person, Double> relationships = new HashMap<>();
-    private final ArrayList<Task> tasks = new ArrayList<>();
+    private final ArrayList<Person> children = new ArrayList<>();
     private final ArrayList<String> history = new ArrayList<>();
+    private final ArrayList<Task> tasks = new ArrayList<>();
     private final Alignment alignment = new Alignment();
 
     private static final int[] levels = {
@@ -106,9 +110,7 @@ public class Person implements DetailsObject, Serializable {
                 if (t != null) addTask(t);
                 else break;
             }
-        } else {
-            //kids are boring
-        }
+        }  //kids are boring
         if (getAge() > race.getAge()) {
             if (rand.nextDouble() < getAge() / (100. * race.getAge())) {
                 die("old age");
@@ -130,7 +132,7 @@ public class Person implements DetailsObject, Serializable {
             workOn(Weight.weightedChoice(this::taskWorkWeight, tasks));
         }
     }
-    public void workOn(Task t) {
+    private void workOn(Task t) {
         if (t != null) {
             record("Working on " + t);
             if (t.work(this)) {
@@ -180,6 +182,10 @@ public class Person implements DetailsObject, Serializable {
             last = spouse.last;
         }
     }
+
+    public void addChild(Person p) {children.add(p);}
+
+    public ArrayList<Person> getChildren() {return children;}
 
     public void divorce() {
         spouse = null;
@@ -282,5 +288,10 @@ public class Person implements DetailsObject, Serializable {
     @Override
     public Type getType() {
         return Type.PERSON;
+    }
+
+    @Override
+    public Stream<Person> children() {
+        return relationships.keySet().stream();
     }
 }

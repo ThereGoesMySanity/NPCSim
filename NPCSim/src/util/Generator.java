@@ -12,12 +12,11 @@ public class Generator {
     Generator(Path p) {
         try {
             Iterator<String> iter = Files.lines(p).iterator();
-            String s = iter.next();
             while(iter.hasNext()) {
-                String[] header = s.split(" ", 2);
+                String[] header = iter.next().split(" ", 2);
                 String[] lines = new String[Integer.parseInt(header[0])];
                 for(int i = 0; i < lines.length && iter.hasNext(); i++) {
-                    lines[i] = iter.next().substring(1);
+                    lines[i] = iter.next();
                 }
                 tables.add(Map.entry(header[1], lines));
             }
@@ -28,7 +27,7 @@ public class Generator {
     public String generate() {
         StringBuilder sb = new StringBuilder();
         tables.forEach(e -> sb.append(e.getKey())
-                .append("\n\t")
+                .append("\n")
                 .append(Weight.choose(e.getValue()))
                 .append('\n'));
         return sb.toString();

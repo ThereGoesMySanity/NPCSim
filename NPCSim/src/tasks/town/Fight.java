@@ -17,6 +17,7 @@ import java.util.Set;
 import static main.Main.*;
 import static people.Stats.Stat.*;
 import static util.Variables.Doubles.FIGHT_WEIGHT;
+import static util.Variables.Doubles.MONSTER_LEVEL_CHANCE;
 
 public class Fight extends TownTask {
     private static final String[] columnNames = {"Person", "HP"};
@@ -30,7 +31,7 @@ public class Fight extends TownTask {
     public Fight(Town t) {
         super(t);
         int level = 1;
-        while (rand.nextBoolean()) level++;
+        while (rand.nextDouble() < vars.get(MONSTER_LEVEL_CHANCE)) level++;
         monster = tables.monsterGen.getMonster(t, level);
         hp = monster.getHP();
     }

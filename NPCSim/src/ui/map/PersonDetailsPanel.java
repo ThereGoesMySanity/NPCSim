@@ -18,6 +18,7 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
     private final JTable stats;
     private final JTable relationsTable;
     private final JComboBox<Town> town;
+    private final JList<Person> children;
     private final JList<String> history;
     private final JList<Task> tasks;
     private final JLabel level;
@@ -182,15 +183,19 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
         tasks.addListSelectionListener(mapPanel.listener);
         JScrollPane tasksScroll = new JScrollPane(tasks);
         tasksScroll.setPreferredSize(tasks.getPreferredSize());
-        tabbedPane.addTab("Tasks", null, tasksScroll, null);
+        tabbedPane.addTab("Tasks", tasksScroll);
 
         history = new JList<>();
         JScrollPane historyScroll = new JScrollPane(history);
         historyScroll.setPreferredSize(history.getPreferredSize());
-        tabbedPane.addTab("History", null, historyScroll, null);
+        tabbedPane.addTab("History", historyScroll);
+
+        children = new JList<>();
+        children.addListSelectionListener(mapPanel.listener);
+        tabbedPane.addTab("Children", children);
 
         JPanel relations = new JPanel();
-        tabbedPane.addTab("Relations", null, relations, null);
+        tabbedPane.addTab("Relations", relations);
         relations.setLayout(new BorderLayout(0, 0));
 
         JPanel searchBar = new JPanel();
@@ -247,6 +252,7 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
         if (person != null) {
             Convert.listToJList(person.getHistory(), history);
             Convert.listToJList(person.getTasks(), tasks, t -> t.toString(person));
+            Convert.listToJList(person.getChildren(), children);
             Convert.mapToTable(person.relationships, relationsTable, relationsColumns);
             town.setSelectedItem(person.getTown());
             stats.setModel(person.stats);

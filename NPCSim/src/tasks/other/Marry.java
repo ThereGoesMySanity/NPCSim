@@ -75,7 +75,6 @@ public class Marry extends Task {
     @Override
     public void add(Person person) {
         super.add(person);
-        if (person.spouse != null) end();
         if (spouse1 != null || spouse2 != null) return;
         spouse1 = getSpouseCandidate(person);
         spouse2 = person;

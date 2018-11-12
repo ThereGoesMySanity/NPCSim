@@ -32,10 +32,8 @@ public class TreePath {
         List<Node<T>> next, current = new ArrayList<>();
         current.add(new Node<>(start, null));
         Node<T> last = null;
-        int len = 0;
         while (last == null) {
             next = new ArrayList<>();
-            len++;
             for (Node<T> p : current) {
                 if (p.value().equals(end)) {
                     last = p;
@@ -48,9 +46,12 @@ public class TreePath {
                             .forEach(next::add);
                 }
             }
+            if(next.size() == 0) {
+                break;
+            }
             current = next;
         }
-        List<T> path = new ArrayList<>(len);
+        List<T> path = new ArrayList<>();
         while (last != null) {
             path.add(last.value());
             last = last.parent();

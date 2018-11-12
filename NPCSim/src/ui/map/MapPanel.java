@@ -1,8 +1,10 @@
 package ui.map;
 
 import main.Main;
+import people.Person;
 import tasks.Task;
 import ui.map.DetailsPanel.DetailsObject;
+import ui.other.SearchPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +21,7 @@ public class MapPanel extends JPanel {
     private final ArrayList<DetailsPanel> pins = new ArrayList<>();
     private final EnumMap<Type, DetailsPanel> panelMap = new EnumMap<>(Type.class);
     public final Main main;
+    private SearchPanel searchPanel;
     private final JTabbedPane tabbedPane;
     private final JPopupMenu menu;
     private DetailsPanel tab;
@@ -26,9 +29,10 @@ public class MapPanel extends JPanel {
     private final JFileChooser fileChooser = new JFileChooser();
     private final ListPanel list;
 
-    public MapPanel(Main main) {
+    public MapPanel(Main main, SearchPanel sp) {
         super(new BorderLayout());
         this.main = main;
+        searchPanel = sp;
 
         menu = new JPopupMenu();
         JMenuItem pin = new JMenuItem("Pin");
@@ -81,9 +85,14 @@ public class MapPanel extends JPanel {
 
     private void set(Type type, DetailsObject o) {
         if(o != null) {
-            if(type == TASK) {
-                Main.taskMan.panes.remove(panelMap.get(type).getObject());
-                Main.taskMan.panes.put((Task)o, (TaskDetailsPanel)panelMap.get(type));
+            switch (type) {
+                case TASK:
+                    Main.taskMan.panes.remove(panelMap.get(type).getObject());
+                    Main.taskMan.panes.put((Task) o, (TaskDetailsPanel) panelMap.get(type));
+                    break;
+                case PERSON:
+                    searchPanel.setSelectedPerson((Person) o);
+                    break;
             }
             panelMap.get(type).setObject(o);
             addTab(type);

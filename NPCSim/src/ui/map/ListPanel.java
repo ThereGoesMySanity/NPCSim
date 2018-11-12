@@ -32,6 +32,7 @@ public class ListPanel extends JPanel implements Town.Listener {
         add(scrollPane, BorderLayout.CENTER);
 
         JTree tree = new JTree(model);
+        tree.setCellRenderer(new ListTreeRenderer());
         tree.addTreeSelectionListener(mapPanel.listener);
         scrollPane.setViewportView(tree);
     }

@@ -4,45 +4,55 @@ import people.Person;
 import people.Race;
 import tasks.Task;
 
-import java.util.stream.Stream;
-
 import static main.Main.rand;
+import static main.Main.vars;
+import static util.Variables.Ints.BIRTH_CHANCE;
 
 public class Married extends Task {
 
     public Married(boolean temp) {
         super(temp);
     }
-
+    int work = 0;
     @Override
     public double weightSub(Person p) {
-        return -1;
+        return 0;
     }
 
     @Override
     public double getWorkWeight(Person p) {
-        return Math.max(0, p.getRel(p.spouse));
+        return 1;
     }
 
     @Override
     public boolean work(Person p) {
+        work++;
         groupInteract(2, 2);
         Race babbyRace = Race.getRace(p.getRace(), p.spouse.getRace());
-        if (babbyRace != null && p.getAge() < 40 && p.gender == 1 && rand.nextInt(50) == 0) {
-            new Person(p.getTown(), p.getLastName(), 0, babbyRace);
-            Stream.of(p, p.spouse).forEach(p1 -> p1.record("BABBY HAS CREATE"));
+        if (work > 20
+                && babbyRace != null
+                && p.getAge() < p.getRace().getAge() / 2
+                && p.gender == 1
+                && rand.nextInt(vars.get(BIRTH_CHANCE)) == 0) {
+            Person babby = new Person(p.getTown(), p.getLastName(), 0, babbyRace);
+            people().forEach(p1 -> {
+                p1.record("BABBY HAS CREATE");
+                p1.addChild(babby);
+            });
+            work = 0;
         }
         return false;
     }
 
     @Override
+    public void remove(Person p) {
+        super.remove(p);
+        end();
+    }
+
+    @Override
     public void update() {
-        //		people().stream()
-        //		.filter(p -> p.getRel(p.spouse) < 0)
-        //		.findFirst().ifPresent(p -> {
-        //			p.divorce();
-        //			end();
-        //		});
+        if(people().stream().anyMatch(p -> p.spouse == null)) end();
     }
 
     @Override

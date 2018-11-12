@@ -19,7 +19,7 @@ public class Tables {
     private final HashMap<String, String[]> names = new HashMap<>();
     private final HashMap<String, Item[]> items = new HashMap<>();
     public final MonsterGen monsterGen = new MonsterGen();
-    private final HashMap<String, Generator> generators = new HashMap<>();
+    public final HashMap<String, Generator> generators = new HashMap<>();
 
     public Tables() {
         try {
@@ -86,6 +86,11 @@ public class Tables {
         return chooseFromFiles(names, () -> getRaceNames(r).flatMap(s -> s.equals("human") ?
                 Stream.concat(Arrays.stream(t.locales()),
                         Stream.of("misc")) : Stream.of(s)
+                ).map(s -> "surnames_" + s));
+    }
+    public String getLastName(String[] surnames, Race r) {
+        return chooseFromFiles(names, () -> getRaceNames(r).flatMap(s -> s.equals("human") ?
+                Arrays.stream(surnames) : Stream.of(s)
         ).map(s -> "surnames_" + s));
     }
 
