@@ -40,7 +40,7 @@ public class Variables {
         varInts.put(ADVENTURER_WEIGHT, 20);
         varInts.put(SPAWN_WEIGHT, 150);
         varInts.put(TASKS, 1);
-        varInts.put(MONSTER_CHANCE, 5);
+        varInts.put(MONSTER_CHANCE, 10);
         varInts.put(BIRTH_CHANCE, 50);
     }
 

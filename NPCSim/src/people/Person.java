@@ -26,6 +26,7 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
     public final Stats stats = new Stats();
     private boolean dead = false;
     private String notes = "";
+    public String personality = tables.getGenerator("personality").generate();
     private String first, last;
     public int level;
     public int xp;
@@ -69,9 +70,9 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
         race = r;
         this.last = last;
         this.months = age * 12;
-        level = 1;
-        if (age > 20) level += rand.nextInt(5);
-        xp = levels[level];
+        level = 1 + (age>20?(int)(rand.nextGaussian() * 0.1):0);
+        if(level < 1) level = 1;
+        xp = levels[level-1];
         t.add(this);
     }
 

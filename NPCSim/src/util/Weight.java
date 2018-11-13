@@ -17,7 +17,7 @@ public class Weight {
         return weightedChoice(weights, items.get(), total);
     }
 
-    public static <K> K weightedChoice(ToDoubleFunction<K> weights, Stream<K> items, double total) {
+    private static <K> K weightedChoice(ToDoubleFunction<K> weights, Stream<K> items, double total) {
         AtomicReference<Double> count = new AtomicReference<>(0.);
         Double end = rand.nextDouble() * total;
         return items.filter(i -> weights.applyAsDouble(i) > 0).dropWhile(var ->
@@ -42,7 +42,7 @@ public class Weight {
         return items[rand.nextInt(items.length)];
     }
 
-    public static <K, T extends Comparable<T>> K chooseSorted(K[] items, T limit, Function<K, T> func) {
+    static <K, T extends Comparable<T>> K chooseSorted(K[] items, T limit, Function<K, T> func) {
         int i = 0;
         while (func.apply(items[i]).compareTo(limit) <= 0) i++;
         return choose(items, 0, i);
@@ -63,7 +63,7 @@ public class Weight {
         else return choose(str.get().iterator(), rand.nextInt(size));
     }
 
-    public static <K> K choose(Iterator<K> iter, int num) {
+    private static <K> K choose(Iterator<K> iter, int num) {
         if(!iter.hasNext()) return null;
         for (int i = 0; i < num; i++) iter.next();
         return iter.next();

@@ -8,17 +8,20 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class Generator {
-    private final ArrayList<Map.Entry<String, String[]>> tables = new ArrayList<>(); //poor man's hashmap
+    private final ArrayList<Map.Entry<String, Map.Entry<String, Integer>[]>> tables = new ArrayList<>(); //poor man's hashmap
+    private boolean flat = false;
     Generator(Path p) {
         try {
             Iterator<String> iter = Files.lines(p).iterator();
             while(iter.hasNext()) {
                 String[] header = iter.next().split(" ", 2);
-                String[] lines = new String[Integer.parseInt(header[0])];
+                flat = header.length == 1 || header[1].isEmpty();
+                Map.Entry<String, Integer>[] lines = new Map.Entry[Integer.parseInt(header[0])];
                 for(int i = 0; i < lines.length && iter.hasNext(); i++) {
-                    lines[i] = iter.next();
+                    String[] ss = iter.next().split("\t");
+                    lines[i] = Map.entry(ss[1], ss[0].isEmpty()? 1 : Integer.parseInt(ss[0]));
                 }
-                tables.add(Map.entry(header[1], lines));
+                tables.add(Map.entry(header.length == 1 ? "" : header[1], lines));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -27,9 +30,9 @@ public class Generator {
     public String generate() {
         StringBuilder sb = new StringBuilder();
         tables.forEach(e -> sb.append(e.getKey())
-                .append("\n")
-                .append(Weight.choose(e.getValue()))
-                .append('\n'));
+                .append(flat?"":'\n')
+                .append(Weight.weightedChoice(Map.Entry::getValue, e.getValue()).getKey())
+                .append(flat?"":'\n'));
         return sb.toString();
     }
 }

@@ -39,7 +39,7 @@ public class Soldier extends TownTask {
     public boolean work(Person p) {
         if(p.canAdd(Fight.class)) {
             Fight monster = p.getTown().getRandomTask(Fight.class);
-            if (monster != null) p.addTask(monster);
+            if (monster != null && monster.getCR() <= p.level) p.addTask(monster);
         }
         return false;
     }

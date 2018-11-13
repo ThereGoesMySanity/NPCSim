@@ -1,7 +1,6 @@
 package tasks.other;
 
 import people.Person;
-import tasks.Task;
 import tasks.town.Fight;
 
 import static main.Main.rand;
@@ -38,8 +37,8 @@ public class Adventurer extends Travel {
                 return travel(p);
             }
         } else {
-            Task monster = p.getTown().getRandomTask(Fight.class);
-            if (monster != null) {
+            Fight monster = p.getTown().getRandomTask(Fight.class);
+            if (monster != null && monster.getCR() <= p.level) {
                 p.addTask(monster);
             }
         }
