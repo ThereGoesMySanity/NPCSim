@@ -42,6 +42,7 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
     private final ArrayList<String> history = new ArrayList<>();
     private final ArrayList<Task> tasks = new ArrayList<>();
     private final Alignment alignment = new Alignment();
+    private final ArrayList<PersonListener> listeners = new ArrayList<>();
 
     private static final int[] levels = {
             0, 300, 900, 2700, 6500, 14000, 23000, 34000,
@@ -144,8 +145,7 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
     }
 
     public void die(String reason) {
-        tasks.forEach(t -> t.remove(this));
-        town.remove(this);
+        listeners.forEach(pl -> pl.onDeath(this));
         if (spouse != null) spouse.spouse = null;
         record("Died at " + getAge() + " of " + reason);
         tasks.clear();
@@ -182,9 +182,19 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
         if (gender == 1) {
             last = spouse.last;
         }
+        listeners.forEach(pl -> pl.onMarry(this, p));
+    }
+    public void addListener(PersonListener pl) {
+        listeners.add(pl);
+    }
+    public void removeListener(PersonListener pl) {
+        listeners.remove(pl);
     }
 
-    public void addChild(Person p) {children.add(p);}
+    public void addChild(Person p) {
+        children.add(p);
+        listeners.forEach(pl -> pl.onChild(this, p));
+    }
 
     public ArrayList<Person> getChildren() {return children;}
 

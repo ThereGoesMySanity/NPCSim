@@ -2,6 +2,7 @@ package main;
 
 import map.AreaMap;
 import tasks.TaskManager;
+import util.FamilyTree;
 import util.Tables;
 import util.Time;
 import util.Variables;
@@ -16,6 +17,7 @@ public class Main {
     public static TaskManager taskMan = new TaskManager();
     public static final Tables tables = new Tables();
     public static Time time = new Time(1700);
+    public static FamilyTree tree = new FamilyTree();
     public AreaMap map = new AreaMap();
 
     public void update() {

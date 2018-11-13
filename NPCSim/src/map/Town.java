@@ -1,6 +1,8 @@
 package map;
 
+import main.Main;
 import people.Person;
+import people.PersonListener;
 import tasks.Task;
 import tasks.TownTask;
 import tasks.town.*;
@@ -19,7 +21,7 @@ import static ui.map.DetailsPanel.Type;
 import static util.Variables.Ints.MONSTER_CHANCE;
 import static util.Variables.Ints.SPAWN_WEIGHT;
 
-public class Town implements DetailsObject, Serializable {
+public class Town implements DetailsObject, Serializable, PersonListener {
     public interface Listener {
         void onAdd(Person p);
         void onRemove(Person p);
@@ -43,7 +45,7 @@ public class Town implements DetailsObject, Serializable {
         this.surnames = surnames;
         this.danger = danger;
         for (int i = 0; i < startPop; i++) { //populate
-            new Person(this);
+            tree.add(new Person(this));
         }
         food = startPop * 12;
         Map<Class<? extends TownTask>, Integer> classMap_final = new HashMap<>(classMap);
@@ -64,7 +66,9 @@ public class Town implements DetailsObject, Serializable {
 
     public void update() {
         if(rand.nextInt(vars.get(SPAWN_WEIGHT) * 10 / startPop) == 0
-                || residents.size() < 5) residents.add(new Person(this, 15));
+                || residents.size() < 5) {
+            Main.tree.add(new Person(this, 15));
+        }
         taskMan.addTasks(this, Map.of(
                 Socialize.class, rand.nextInt(residents.size() / 10 + 1),
                 Fight.class, rand.nextInt(10 * vars.get(MONSTER_CHANCE)) < danger? 1 : 0
@@ -106,12 +110,14 @@ public class Town implements DetailsObject, Serializable {
 
     private void addBase(Person p) {
         p.setTown(this);
+        p.addListener(this);
         listeners.forEach(l -> l.onAdd(p));
     }
 
     public void remove(Person p) {
         residents.remove(p);
         travellers.remove(p);
+        p.removeListener(this);
         listeners.forEach(l -> l.onRemove(p));
         p.getTasks().removeIf(jobs::contains);
         p.setTown(null);
@@ -181,5 +187,14 @@ public class Town implements DetailsObject, Serializable {
         in.defaultReadObject();
         listeners = new ArrayList<>();
     }
+    @Override
+    public void onChild(Person p, Person child) { }
 
+    @Override
+    public void onMarry(Person p, Person spouse) { }
+
+    @Override
+    public void onDeath(Person p) {
+        remove(p);
+    }
 }

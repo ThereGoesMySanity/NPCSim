@@ -1,6 +1,7 @@
 package tasks;
 
 import people.Person;
+import people.PersonListener;
 import people.Stats.Stat;
 import ui.map.TaskDetailsPanel;
 
@@ -13,7 +14,7 @@ import static ui.map.DetailsPanel.DetailsObject;
 import static ui.map.DetailsPanel.Type;
 import static util.Variables.Doubles.TASK_MOD_WEIGHT;
 
-public abstract class Task implements DetailsObject, Serializable {
+public abstract class Task implements DetailsObject, Serializable, PersonListener {
     private final boolean template;
     private final ArrayList<Person> participants = new ArrayList<>();
     private final int maxSize;
@@ -34,10 +35,12 @@ public abstract class Task implements DetailsObject, Serializable {
 
     public void add(Person p) {
         participants.add(p);
+        p.addListener(this);
     }
 
     public void remove(Person p) {
         participants.remove(p);
+        p.removeListener(this);
     }
 
     public int size() {
@@ -51,7 +54,6 @@ public abstract class Task implements DetailsObject, Serializable {
     public void end() {
         taskMan.endTask(this);
         ArrayList<Person> pr = new ArrayList<>(participants);
-        participants.clear();
         pr.forEach(p -> p.removeTask(this));
     }
 
@@ -120,4 +122,15 @@ public abstract class Task implements DetailsObject, Serializable {
     public abstract void update();
 
     public abstract void updatePost();
+
+    @Override
+    public void onChild(Person p, Person child) { }
+
+    @Override
+    public void onMarry(Person p, Person spouse) { }
+
+    @Override
+    public void onDeath(Person p) {
+        remove(p);
+    }
 }

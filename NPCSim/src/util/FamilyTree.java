@@ -1,29 +1,57 @@
 package util;
 
 import people.Person;
+import people.PersonListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FamilyTree {
-    public static class TreeNode<T> {
-        T value;
-        TreeNode<T> parent;
-        TreeNode<T> spouse;
-        ArrayList<TreeNode<T>> children;
-        public TreeNode(T value, TreeNode<T> parent) {
+public class FamilyTree implements PersonListener {
+    public static class TreeNode {
+        Person value;
+        TreeNode parent;
+        TreeNode spouse;
+        ArrayList<TreeNode> children;
+        TreeNode(Person value, TreeNode parent) {
             this.value = value;
             this.parent = parent;
             children = new ArrayList<>();
         }
-        public void addChild(T child) {
-            children.add(new TreeNode<>(child, this));
+        void addChild(Person child) {
+            children.add(new TreeNode(child, this));
+        }
+        void setSpouse(TreeNode spouse) {
+            this.spouse = spouse;
         }
     }
-    private ArrayList<TreeNode<Person>> roots;
-    private HashMap<Person, TreeNode<Person>> nodes;
+    private HashMap<Person, TreeNode> nodes;
     public FamilyTree() {
-        roots = new ArrayList<>();
-        nodes = new
+        nodes = new HashMap<>();
     }
+    public void add(Person p) {
+        TreeNode node = new TreeNode(p, null);
+        nodes.put(p, node);
+    }
+    public void addChild(Person p, Person child) {
+        nodes.get(p).addChild(child);
+    }
+    public void addSpouse(Person p, Person p1) {
+        nodes.get(p).setSpouse(nodes.get(p1));
+    }
+    public void getRoot(Person p) {
+        TreeNode node = nodes.get(p);
+        while(node.parent != null) node = node.parent;
+    }
+    @Override
+    public void onChild(Person p, Person child) {
+        addChild(p, child);
+    }
+
+    @Override
+    public void onMarry(Person p, Person spouse) {
+        addSpouse(p, spouse);
+    }
+
+    @Override
+    public void onDeath(Person p) { }
 }
