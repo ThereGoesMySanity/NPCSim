@@ -13,7 +13,7 @@ public class Married extends Task {
     public Married(boolean temp) {
         super(temp);
     }
-    int work = 0;
+    private int work = 0;
     @Override
     public double weightSub(Person p) {
         return 0;
@@ -26,6 +26,7 @@ public class Married extends Task {
 
     @Override
     public boolean work(Person p) {
+        if(p.spouse == null) return true;
         work++;
         groupInteract(2, 2);
         Race babbyRace = Race.getRace(p.getRace(), p.spouse.getRace());
@@ -52,7 +53,6 @@ public class Married extends Task {
 
     @Override
     public void update() {
-        if(people().stream().anyMatch(p -> p.spouse == null)) end();
     }
 
     @Override

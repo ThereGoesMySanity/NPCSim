@@ -12,7 +12,7 @@ import java.awt.*;
 
 import static ui.map.DetailsPanel.Type.PERSON;
 
-public class PersonDetailsPanel extends JPanel implements DetailsPanel {
+public class PersonDetailsPanel extends DetailsPanel {
     private static final String[] relationsColumns = {"Person", "Relation"};
     private Person person;
     private final JTextField name;
@@ -163,7 +163,7 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
         gbc_alignment.gridx = 3;
         gbc_alignment.gridy = 4;
         infoPanel.add(alignment, gbc_alignment);
-        
+
         personality = new JTextArea("Personality");
         personality.setLineWrap(true);
         personality.setEditable(false);
@@ -257,25 +257,23 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
     }
 
     @Override
-    public void refresh() {
-        if (person != null) {
-            Convert.listToJList(person.getHistory(), history);
-            Convert.listToJList(person.getTasks(), tasks, t -> t.toString(person));
-            Convert.listToJList(person.getChildren(), children);
-            Convert.mapToTable(person.relationships, relationsTable, relationsColumns);
-            town.setSelectedItem(person.getTown());
-            stats.setModel(person.stats);
-            level.setText("Level " + person.level);
-            name.setText(person.toString());
-            xp.setText(person.xp + "");
-            notes.setText(person.getNotes());
-            alignment.setText(person.getAlignment().toString());
-            age.setText("Age " + person.getAge());
-            race.setText(person.getRace().toString());
-            personality.setText(person.personality);
-            if (person.spouse != null) spouse.setText(person.spouse.toString());
-            else spouse.setText("None");
-        }
+    public void refreshSub() {
+        Convert.listToJList(person.getHistory(), history);
+        Convert.listToJList(person.getTasks(), tasks, t -> t.toString(person));
+        Convert.listToJList(person.getChildren(), children);
+        Convert.mapToTable(person.relationships, relationsTable, relationsColumns);
+        town.setSelectedItem(person.getTown());
+        stats.setModel(person.stats);
+        level.setText("Level " + person.level);
+        name.setText(person.toString());
+        xp.setText(person.xp + "");
+        notes.setText(person.getNotes());
+        alignment.setText(person.getAlignment().toString());
+        age.setText("Age " + person.getAge());
+        race.setText(person.getRace().toString());
+        personality.setText(person.personality);
+        if (person.spouse != null) spouse.setText(person.spouse.toString());
+        else spouse.setText("None");
     }
 
     @Override
@@ -289,22 +287,17 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
     }
 
     @Override
-    public Component toComponent() {
-        return this;
-    }
-
-    @Override
     public DetailsPanel newInstance(DetailsListener dl) {
         return new PersonDetailsPanel(dl, map);
     }
 
     @Override
-    public void onChange(DetailsObject o) {
-        person = (Person) o;
+    public void pin() {
+
     }
 
     @Override
-    public boolean listening(Type t) {
-        return t == PERSON;
+    public void setObject(DetailsObject o) {
+        person = (Person) o;
     }
 }

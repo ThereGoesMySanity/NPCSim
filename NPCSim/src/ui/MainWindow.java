@@ -71,7 +71,7 @@ public class MainWindow extends JFrame {
         tabbedPane.addTab("Names", new NamesPanel());
 
         TreePanel treePanel = new TreePanel();
-        tabbedPane.addTab("Family Tree", treePanel);
+        tabbedPane.addTab("Family Tree", new JScrollPane(treePanel));
         listener.addListener(treePanel);
 
         JPanel buttonPanel = new JPanel();

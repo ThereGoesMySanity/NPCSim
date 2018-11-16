@@ -115,9 +115,11 @@ public class Town implements DetailsObject, Serializable, PersonListener {
     }
 
     public void remove(Person p) {
+        p.removeListener(this);
+    }
+    private void removeBase(Person p) {
         residents.remove(p);
         travellers.remove(p);
-        p.removeListener(this);
         listeners.forEach(l -> l.onRemove(p));
         p.getTasks().removeIf(jobs::contains);
         p.setTown(null);
@@ -195,6 +197,6 @@ public class Town implements DetailsObject, Serializable, PersonListener {
 
     @Override
     public void onDeath(Person p) {
-        remove(p);
+        removeBase(p);
     }
 }

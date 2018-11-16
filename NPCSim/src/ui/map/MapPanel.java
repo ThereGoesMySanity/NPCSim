@@ -69,8 +69,8 @@ public class MapPanel extends JPanel implements DLListener {
 
     private void addTab(Type t) {
         DetailsPanel dp = panelMap.get(t);
-        tabbedPane.addTab(dp.getObject().toString(), dp.toComponent());
-        tabbedPane.setSelectedComponent(dp.toComponent());
+        tabbedPane.addTab(dp.getObject().toString(), dp);
+        tabbedPane.setSelectedComponent(dp);
     }
     public DetailsPanel get(Type type) {
         return panelMap.get(type);
@@ -79,11 +79,15 @@ public class MapPanel extends JPanel implements DLListener {
     private void pin() {
         pins.add(tab);
         panelMap.put(tab.getType(), tab.newInstance(listener));
+        tab.pin();
     }
 
     private void unpin() {
         pins.remove(tab);
-        tabbedPane.remove(tab.toComponent());
+        tabbedPane.remove(tab);
+        if(panelMap.get(tab.getType()).getObject() == null) {
+            panelMap.get(tab.getType()).onChange(tab.getObject());
+        }
     }
 
     public void reload() {

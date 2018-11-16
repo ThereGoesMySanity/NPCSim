@@ -140,6 +140,6 @@ public abstract class Task implements DetailsObject, Serializable, PersonListene
 
     @Override
     public void onDeath(Person p) {
-        remove(p);
+        participants.remove(p);
     }
 }

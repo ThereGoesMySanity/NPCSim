@@ -7,7 +7,7 @@ import util.Convert;
 import javax.swing.*;
 import java.awt.*;
 
-public class TownDetailsPanel extends JPanel implements DetailsPanel {
+public class TownDetailsPanel extends DetailsPanel {
     private final JList<Task> taskList;
     private Town town;
     private final JList<Town> roadList;
@@ -18,7 +18,6 @@ public class TownDetailsPanel extends JPanel implements DetailsPanel {
 
     /**
      * Create the panel.
-     *
      */
     TownDetailsPanel(DetailsListener listener) {
         setLayout(new BorderLayout(0, 0));
@@ -90,15 +89,13 @@ public class TownDetailsPanel extends JPanel implements DetailsPanel {
     }
 
     @Override
-    public void refresh() {
-        if (town != null) {
-            Convert.listToJList(town.getTasks(), taskList);
-            Convert.listToJList(town.destinations(), roadList);
-            lblDanger.setText("Danger: " + town.danger);
-            lblFood.setText("Food: " + town.food);
-            lblPopulation.setText("Population: " + town.residents.size());
-            lblTownName.setText(town.toString());
-        }
+    public void refreshSub() {
+        Convert.listToJList(town.getTasks(), taskList);
+        Convert.listToJList(town.destinations(), roadList);
+        lblDanger.setText("Danger: " + town.danger);
+        lblFood.setText("Food: " + town.food);
+        lblPopulation.setText("Population: " + town.residents.size());
+        lblTownName.setText(town.toString());
     }
 
     @Override
@@ -112,22 +109,7 @@ public class TownDetailsPanel extends JPanel implements DetailsPanel {
     }
 
     @Override
-    public Component toComponent() {
-        return this;
-    }
-
-    @Override
-    public DetailsPanel newInstance(DetailsListener dl){
-        return new TownDetailsPanel(dl);
-    }
-
-    @Override
-    public void onChange(DetailsObject o) {
+    public void setObject(DetailsObject o) {
         town = (Town) o;
-    }
-
-    @Override
-    public boolean listening(Type t) {
-        return t == Type.TOWN;
     }
 }

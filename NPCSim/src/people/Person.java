@@ -7,7 +7,6 @@ import util.Dice;
 import util.TreePath;
 import util.Weight;
 
-import javax.swing.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +35,6 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
     private final Race race;
     public Person spouse;
     private Dice attack = new Dice("1d6");
-    public Icon icon;
     public final HashMap<Person, Double> relationships = new HashMap<>();
     private final ArrayList<Person> children = new ArrayList<>();
     private final ArrayList<String> history = new ArrayList<>();
@@ -146,6 +144,7 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
 
     public void die(String reason) {
         listeners.forEach(pl -> pl.onDeath(this));
+        listeners.clear();
         if (spouse != null) spouse.spouse = null;
         record("Died at " + getAge() + " of " + reason);
         tasks.clear();

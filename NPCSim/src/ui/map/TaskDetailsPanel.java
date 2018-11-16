@@ -7,7 +7,7 @@ import util.Convert;
 import javax.swing.*;
 import java.awt.*;
 
-public class TaskDetailsPanel extends JPanel implements DetailsPanel {
+public class TaskDetailsPanel extends DetailsPanel {
     private final JList<Person> people;
     private Task task;
     private final JTabbedPane tabbedPane;
@@ -40,22 +40,10 @@ public class TaskDetailsPanel extends JPanel implements DetailsPanel {
     }
 
     @Override
-    public void refresh() {
-        if (task != null) {
-            task.updatePane();
-            nameLabel.setText(task.toString());
-            Convert.listToJList(task.people(), people);
-        }
-    }
-
-    @Override
-    public Component toComponent() {
-        return this;
-    }
-
-    @Override
-    public DetailsPanel newInstance(DetailsListener dl) {
-        return new TaskDetailsPanel(dl);
+    public void refreshSub() {
+        task.updatePane();
+        nameLabel.setText(task.toString());
+        Convert.listToJList(task.people(), people);
     }
 
     public void addLabel(JLabel... labels) {
@@ -83,7 +71,7 @@ public class TaskDetailsPanel extends JPanel implements DetailsPanel {
     }
 
     @Override
-    public void onChange(DetailsObject o) {
+    public void setObject(DetailsObject o) {
         task = (Task) o;
         if (o == null) return;
         for (int i = 1; i < tabbedPane.getTabCount(); i++) {
@@ -95,10 +83,5 @@ public class TaskDetailsPanel extends JPanel implements DetailsPanel {
         addLabel(nameLabel);
         task.addToPane(this);
         refresh();
-    }
-
-    @Override
-    public boolean listening(Type t) {
-        return t == getType();
     }
 }
