@@ -257,7 +257,7 @@ public class PersonDetailsPanel extends DetailsPanel {
     }
 
     @Override
-    public void refreshSub() {
+    void refreshSub() {
         Convert.listToJList(person.getHistory(), history);
         Convert.listToJList(person.getTasks(), tasks, t -> t.toString(person));
         Convert.listToJList(person.getChildren(), children);
@@ -272,7 +272,7 @@ public class PersonDetailsPanel extends DetailsPanel {
         age.setText("Age " + person.getAge());
         race.setText(person.getRace().toString());
         personality.setText(person.personality);
-        if (person.spouse != null) spouse.setText(person.spouse.toString());
+        if (person.getSpouse() != null) spouse.setText(person.getSpouse().toString());
         else spouse.setText("None");
     }
 
@@ -289,11 +289,6 @@ public class PersonDetailsPanel extends DetailsPanel {
     @Override
     public DetailsPanel newInstance(DetailsListener dl) {
         return new PersonDetailsPanel(dl, map);
-    }
-
-    @Override
-    public void pin() {
-
     }
 
     @Override

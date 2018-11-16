@@ -85,11 +85,10 @@ public class TownDetailsPanel extends DetailsPanel {
         gbc_surnames.gridx = 0;
         gbc_surnames.gridy = 2;
         panel.add(surnames, gbc_surnames);
-
     }
 
     @Override
-    public void refreshSub() {
+    void refreshSub() {
         Convert.listToJList(town.getTasks(), taskList);
         Convert.listToJList(town.destinations(), roadList);
         lblDanger.setText("Danger: " + town.danger);

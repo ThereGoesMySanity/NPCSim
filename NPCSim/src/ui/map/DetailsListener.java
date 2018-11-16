@@ -37,12 +37,13 @@ public class DetailsListener implements ListSelectionListener, TreeSelectionList
     }
     private void onChange(DetailsObject det) {
         for(DLListener l : listeners) {
-            if(l.listening(det.getType())) {
+            if(det != null && l.listening(det.getType())) {
                 l.onChange(det);
             }
         }
     }
     public void addListener(DLListener d) {
+        assert d != null;
         listeners.add(d);
     }
 }

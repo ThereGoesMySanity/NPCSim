@@ -2,6 +2,8 @@ package util;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static main.Main.rand;
 
@@ -12,6 +14,7 @@ public class Dice implements Serializable {
         final int die;
 
         Die(int s, int n, int d) {
+            sign = s;
             num = n;
             die = d;
         }
@@ -59,5 +62,8 @@ public class Dice implements Serializable {
 
     public int roll() {
         return Arrays.stream(dice).mapToInt(Die::roll).sum() + constant;
+    }
+    public String toString() {
+        return Arrays.stream(dice).map(Objects::toString).collect(Collectors.joining("+"))+"+"+constant;
     }
 }

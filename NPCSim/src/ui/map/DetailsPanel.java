@@ -3,7 +3,6 @@ package ui.map;
 import ui.map.DetailsListener.DLListener;
 
 import javax.swing.*;
-import java.lang.reflect.InvocationTargetException;
 
 public abstract class DetailsPanel extends JPanel implements DLListener {
     public interface DetailsObject {
@@ -23,7 +22,7 @@ public abstract class DetailsPanel extends JPanel implements DLListener {
     DetailsPanel newInstance(DetailsListener dl) {
         try {
             return getClass().getConstructor(DetailsListener.class).newInstance(dl);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

@@ -26,20 +26,18 @@ public class Married extends Task {
 
     @Override
     public boolean work(Person p) {
-        if(p.spouse == null) return true;
+        if(p.getSpouse() == null) return true;
         work++;
         groupInteract(2, 2);
-        Race babbyRace = Race.getRace(p.getRace(), p.spouse.getRace());
+        Race babbyRace = Race.getRace(p.getRace(), p.getSpouse().getRace());
         if (work > 20
                 && babbyRace != null
                 && p.getAge() < p.getRace().getAge() / 2
                 && p.gender == 1
                 && rand.nextInt(vars.get(BIRTH_CHANCE)) == 0) {
             Person babby = new Person(p.getTown(), p.getLastName(), 0, babbyRace);
-            people().forEach(p1 -> {
-                p1.record("BABBY HAS CREATE");
-                p1.addChild(babby);
-            });
+            people().forEach(p1 -> p1.record("BABBY HAS CREATE"));
+            babby.getNode().setParents(p);
             work = 0;
         }
         return false;

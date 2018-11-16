@@ -40,7 +40,7 @@ public class TaskDetailsPanel extends DetailsPanel {
     }
 
     @Override
-    public void refreshSub() {
+    void refreshSub() {
         task.updatePane();
         nameLabel.setText(task.toString());
         Convert.listToJList(task.people(), people);

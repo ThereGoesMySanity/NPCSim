@@ -71,6 +71,7 @@ public class MapPanel extends JPanel implements DLListener {
         DetailsPanel dp = panelMap.get(t);
         tabbedPane.addTab(dp.getObject().toString(), dp);
         tabbedPane.setSelectedComponent(dp);
+        dp.refresh();
     }
     public DetailsPanel get(Type type) {
         return panelMap.get(type);

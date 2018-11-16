@@ -16,6 +16,18 @@ public enum Race {
     public int getAge() {
         return ages[ordinal()];
     }
+    public int normalizedAge(int age) {
+        switch(this) {
+            case ELF:
+                return (age < 20)? age : (age-20)/12+20;
+            case HALF_ELF:
+                return (age < 20)? age : (age-20)/3+20;
+            case DWARF:
+                return (age < 20)? age : (age-20)/5+20;
+            default:
+                return age;
+        }
+    }
 
     public int getRandomAge() {
         return Math.max(15, rand.nextInt(getAge() - getAge() / 5));

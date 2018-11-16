@@ -4,6 +4,7 @@ import map.Town;
 import people.Stats.Stat;
 import tasks.Task;
 import util.Dice;
+import util.TreeNode;
 import util.TreePath;
 import util.Weight;
 
@@ -11,6 +12,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static main.Main.*;
@@ -33,14 +36,12 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
     private int months;
     private Town town;
     private final Race race;
-    public Person spouse;
     private Dice attack = new Dice("1d6");
     public final HashMap<Person, Double> relationships = new HashMap<>();
-    private final ArrayList<Person> children = new ArrayList<>();
     private final ArrayList<String> history = new ArrayList<>();
     private final ArrayList<Task> tasks = new ArrayList<>();
     private final Alignment alignment = new Alignment();
-    private final ArrayList<PersonListener> listeners = new ArrayList<>();
+    private TreeNode node;
 
     private static final int[] levels = {
             0, 300, 900, 2700, 6500, 14000, 23000, 34000,
@@ -73,6 +74,7 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
         if(level < 1) level = 1;
         xp = levels[level-1];
         t.add(this);
+        new TreeNode(this);
     }
 
     public void addTask(Task t) {
@@ -143,11 +145,10 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
     }
 
     public void die(String reason) {
-        listeners.forEach(pl -> pl.onDeath(this));
-        listeners.clear();
-        if (spouse != null) spouse.spouse = null;
         record("Died at " + getAge() + " of " + reason);
+        tasks.forEach(t -> t.remove(this));
         tasks.clear();
+        town.remove(this);
         dead = true;
     }
 
@@ -177,40 +178,26 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
     }
 
     public void marry(Person p) {
-        spouse = p;
+        setSpouse(p);
         if (gender == 1) {
-            last = spouse.last;
+            last = p.last;
         }
-        listeners.forEach(pl -> pl.onMarry(this, p));
-    }
-    public void addListener(PersonListener pl) {
-        listeners.add(pl);
-    }
-    public void removeListener(PersonListener pl) {
-        listeners.remove(pl);
     }
 
-    public void addChild(Person p) {
-        children.add(p);
-        listeners.forEach(pl -> pl.onChild(this, p));
-    }
-
-    public ArrayList<Person> getChildren() {return children;}
-
-    public void divorce() {
-        spouse = null;
+    public List<Person> getChildren() {
+        return node.children.stream().map(n -> n.value).collect(Collectors.toList());
     }
 
     public Race getRace() {
         return race;
     }
 
-    public int gender() {
-        return gender;
-    }
-
     public int getAge() {
         return months / 12;
+    }
+
+    public int normalizedAge() {
+        return race.normalizedAge(getAge());
     }
 
     public Town getTown() {
@@ -303,5 +290,21 @@ public class Person implements DetailsObject, Serializable, TreePath.Children<Pe
     @Override
     public Stream<Person> children() {
         return relationships.keySet().stream();
+    }
+
+    public TreeNode getNode() {
+        return node;
+    }
+    public void setNode(TreeNode n) {
+        node = n;
+    }
+
+    public Person getSpouse() {
+        if(node.spouse == null) return null;
+        Person spouse = node.spouse.value;
+        return spouse.dead? null : spouse;
+    }
+    public void setSpouse(Person p) {
+        node.setSpouse(p);
     }
 }

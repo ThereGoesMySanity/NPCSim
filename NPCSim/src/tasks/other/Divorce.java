@@ -16,7 +16,7 @@ public class Divorce extends Task {
 
     @Override
     public boolean work(Person p) {
-        p.divorce();
+        p.setSpouse(null);
         //TODO
         return true;
     }

@@ -3,8 +3,10 @@ package tasks.other;
 import people.Person;
 import tasks.Task;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static main.Main.taskMan;
 import static main.Main.vars;
@@ -21,7 +23,7 @@ public class Marry extends Task {
 
     @Override
     public double weightSub(Person p) {
-        if (p.getAge() < 18 || p.spouse != null) return 0;
+        if (p.getAge() < 18 || p.getSpouse() != null) return 0;
         Person spouse = getSpouseCandidate(p);
         if (spouse == null) return 0;
         return Math.max(0, p.getRel(spouse)
@@ -38,9 +40,13 @@ public class Marry extends Task {
     private static Person getSpouseCandidate(Person p) {
         return p.getTown().residents()
                 .filter(p1 ->
-                        p1.spouse == null
-                                && p1.gender() != p.gender()
-                                && p1.getAge() >= Math.max(18, p.getAge() / 2 + 7)
+                        p1.getSpouse() == null
+                                && p1.gender != p.gender
+                                && p1.normalizedAge() >= p.normalizedAge() / 2 + 7
+                                && p.normalizedAge() >= p1.normalizedAge() / 2 + 7
+                                //NO INCEST
+                                && Arrays.stream(p.getNode().parents)
+                                    .flatMap(pn -> pn.children.stream()).noneMatch(Predicate.isEqual(p1))
                 )
                 .max(Comparator.comparingDouble(p::getRel)).orElse(null);
     }
