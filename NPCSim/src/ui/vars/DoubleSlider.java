@@ -1,6 +1,6 @@
 package ui.vars;
 
-import ui.vars.VariablePane.Resetable;
+import ui.vars.VarsPanel.Resetable;
 import util.Variables.Doubles;
 
 import javax.swing.*;

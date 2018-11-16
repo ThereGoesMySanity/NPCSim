@@ -44,7 +44,7 @@ public class NamesPanel extends JPanel {
         b.addActionListener(a -> {
             StringBuilder sb = new StringBuilder();
             for(int i = 0; i < 10; i++)
-                sb.append(tables.getFirstName((int)(Math.random() * 2), (Race) jcb.getSelectedItem())).append(' ')
+                sb.append(tables.getFirstName(i/5, (Race) jcb.getSelectedItem())).append(' ')
                     .append(tables.getLastName(surnames, (Race) jcb.getSelectedItem())).append('\n');
             jta.setText(sb.toString());
         });

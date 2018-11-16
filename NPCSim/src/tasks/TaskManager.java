@@ -1,18 +1,14 @@
 package tasks;
 
-import main.Main;
 import map.Town;
 import tasks.other.*;
 import tasks.town.*;
-import ui.map.TaskDetailsPanel;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class TaskManager implements Serializable {
@@ -41,7 +37,6 @@ public class TaskManager implements Serializable {
             Teach.class,
     };
     private final Task[] templates = new Task[taskList.length];
-    public transient HashMap<Task, TaskDetailsPanel> panes = new HashMap<>();
     private final ArrayList<Task> activeTasks = new ArrayList<>();
     private transient ArrayList<Task> toRemove = new ArrayList<>();
 
@@ -90,11 +85,6 @@ public class TaskManager implements Serializable {
     }
 
     void endTask(Task t) {
-        if (panes.containsKey(t)) {
-            TaskDetailsPanel pane = panes.get(t);
-            pane.refresh();
-            pane.addLabel(new JLabel("Ended " + Main.time));
-        }
         toRemove.add(t);
     }
 
@@ -124,7 +114,6 @@ public class TaskManager implements Serializable {
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         toRemove = new ArrayList<>();
-        panes = new HashMap<>();
         in.defaultReadObject();
     }
 }

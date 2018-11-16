@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class VariablePane extends JPanel implements ChangeListener, ActionListener {
+public class VarsPanel extends JPanel implements ChangeListener, ActionListener {
     @FunctionalInterface
     public interface Resetable {
         void reset();
@@ -24,7 +24,7 @@ public class VariablePane extends JPanel implements ChangeListener, ActionListen
     /**
      * Create the panel.
      */
-    public VariablePane(Variables vars) {
+    public VarsPanel(Variables vars) {
         super(new BorderLayout());
         this.vars = vars;
         int intsSize = Variables.Ints.values().length;
@@ -83,7 +83,7 @@ public class VariablePane extends JPanel implements ChangeListener, ActionListen
         }
     }
 
-    public void updateLabel(Doubles d, JLabel l) {
+    private void updateLabel(Doubles d, JLabel l) {
         l.setText(d.toString() + ": " + String.format("%.4f", vars.get(d)));
     }
 

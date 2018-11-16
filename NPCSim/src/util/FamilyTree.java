@@ -8,10 +8,10 @@ import java.util.HashMap;
 
 public class FamilyTree implements PersonListener {
     public static class TreeNode {
-        Person value;
+        public Person value;
         TreeNode parent;
         TreeNode spouse;
-        ArrayList<TreeNode> children;
+        public ArrayList<TreeNode> children;
         TreeNode(Person value, TreeNode parent) {
             this.value = value;
             this.parent = parent;
@@ -32,15 +32,16 @@ public class FamilyTree implements PersonListener {
         TreeNode node = new TreeNode(p, null);
         nodes.put(p, node);
     }
-    public void addChild(Person p, Person child) {
+    private void addChild(Person p, Person child) {
         nodes.get(p).addChild(child);
     }
-    public void addSpouse(Person p, Person p1) {
+    private void addSpouse(Person p, Person p1) {
         nodes.get(p).setSpouse(nodes.get(p1));
     }
-    public void getRoot(Person p) {
+    public TreeNode getRoot(Person p) {
         TreeNode node = nodes.get(p);
         while(node.parent != null) node = node.parent;
+        return node;
     }
     @Override
     public void onChild(Person p, Person child) {

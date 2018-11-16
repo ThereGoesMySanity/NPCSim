@@ -20,20 +20,20 @@ public class TownDetailsPanel extends JPanel implements DetailsPanel {
      * Create the panel.
      *
      */
-    TownDetailsPanel(MapPanel mapPanel) {
+    TownDetailsPanel(DetailsListener listener) {
         setLayout(new BorderLayout(0, 0));
 
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         add(tabbedPane, BorderLayout.EAST);
 
         taskList = new JList<>();
-        taskList.addListSelectionListener(mapPanel.listener);
+        taskList.addListSelectionListener(listener);
         JScrollPane taskScroll = new JScrollPane(taskList);
         taskScroll.setPreferredSize(new Dimension(150, 100));
         tabbedPane.addTab("Tasks", taskScroll);
 
         roadList = new JList<>();
-        roadList.addListSelectionListener(mapPanel.listener);
+        roadList.addListSelectionListener(listener);
         JScrollPane roadScroll = new JScrollPane(roadList);
         roadScroll.setPreferredSize(new Dimension(150, 100));
         tabbedPane.addTab("Roads", roadScroll);
@@ -90,12 +90,6 @@ public class TownDetailsPanel extends JPanel implements DetailsPanel {
     }
 
     @Override
-    public void setObject(DetailsObject t) {
-        town = (Town) t;
-        refresh();
-    }
-
-    @Override
     public void refresh() {
         if (town != null) {
             Convert.listToJList(town.getTasks(), taskList);
@@ -123,8 +117,17 @@ public class TownDetailsPanel extends JPanel implements DetailsPanel {
     }
 
     @Override
-    public DetailsPanel newInstance(MapPanel mapPanel) {
-        return new TownDetailsPanel(mapPanel);
+    public DetailsPanel newInstance(DetailsListener dl){
+        return new TownDetailsPanel(dl);
     }
 
+    @Override
+    public void onChange(DetailsObject o) {
+        town = (Town) o;
+    }
+
+    @Override
+    public boolean listening(Type t) {
+        return t == Type.TOWN;
+    }
 }

@@ -10,6 +10,8 @@ import util.Convert;
 import javax.swing.*;
 import java.awt.*;
 
+import static ui.map.DetailsPanel.Type.PERSON;
+
 public class PersonDetailsPanel extends JPanel implements DetailsPanel {
     private static final String[] relationsColumns = {"Person", "Relation"};
     private Person person;
@@ -28,11 +30,12 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
     private final JLabel spouse;
     private final JEditorPane notes;
     private final AreaMap map;
+    private JTextArea personality;
 
     /**
      * Create the panel.
      */
-    PersonDetailsPanel(MapPanel mapPanel, AreaMap map) {
+    PersonDetailsPanel(DetailsListener listener, AreaMap map) {
         this.map = map;
         setLayout(new BorderLayout(0, 0));
 
@@ -51,9 +54,9 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
         JPanel infoPanel = new JPanel();
         add(infoPanel, BorderLayout.CENTER);
         GridBagLayout gbl_infoPanel = new GridBagLayout();
-        gbl_infoPanel.columnWidths = new int[]{0, 0, 0, 0};
+        gbl_infoPanel.columnWidths = new int[]{90, 0, 0, 0};
         gbl_infoPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-        gbl_infoPanel.columnWeights = new double[]{1.0, 0.0, 0.0, 1.0};
+        gbl_infoPanel.columnWeights = new double[]{1.0, 0.0, 0.0, 0.5};
         gbl_infoPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
         infoPanel.setLayout(gbl_infoPanel);
 
@@ -160,6 +163,18 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
         gbc_alignment.gridx = 3;
         gbc_alignment.gridy = 4;
         infoPanel.add(alignment, gbc_alignment);
+        
+        personality = new JTextArea("Personality");
+        personality.setLineWrap(true);
+        personality.setEditable(false);
+        GridBagConstraints gbc_personality = new GridBagConstraints();
+        gbc_personality.gridwidth = 3;
+        gbc_personality.gridheight = 2;
+        gbc_personality.insets = new Insets(0, 0, 5, 5);
+        gbc_personality.gridx = 1;
+        gbc_personality.gridy = 5;
+        gbc_personality.fill = GridBagConstraints.BOTH;
+        infoPanel.add(personality, gbc_personality);
 
         JLabel lblNotes = new JLabel("Notes");
         GridBagConstraints gbc_lblNotes = new GridBagConstraints();
@@ -180,7 +195,7 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
         add(tabbedPane, BorderLayout.EAST);
 
         tasks = new JList<>();
-        tasks.addListSelectionListener(mapPanel.listener);
+        tasks.addListSelectionListener(listener);
         JScrollPane tasksScroll = new JScrollPane(tasks);
         tasksScroll.setPreferredSize(tasks.getPreferredSize());
         tabbedPane.addTab("Tasks", tasksScroll);
@@ -191,7 +206,7 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
         tabbedPane.addTab("History", historyScroll);
 
         children = new JList<>();
-        children.addListSelectionListener(mapPanel.listener);
+        children.addListSelectionListener(listener);
         tabbedPane.addTab("Children", children);
 
         JPanel relations = new JPanel();
@@ -230,12 +245,6 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
         relations.add(relationsScroll, BorderLayout.CENTER);
     }
 
-    @Override
-    public void setObject(DetailsObject o) {
-        person = (Person) o;
-        refresh();
-    }
-
     private void commit() {
         String[] names = name.getText().split(" ", 2);
         person.setName(names[0], names[1]);
@@ -263,6 +272,7 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
             alignment.setText(person.getAlignment().toString());
             age.setText("Age " + person.getAge());
             race.setText(person.getRace().toString());
+            personality.setText(person.personality);
             if (person.spouse != null) spouse.setText(person.spouse.toString());
             else spouse.setText("None");
         }
@@ -275,7 +285,7 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
 
     @Override
     public Type getType() {
-        return Type.PERSON;
+        return PERSON;
     }
 
     @Override
@@ -284,7 +294,17 @@ public class PersonDetailsPanel extends JPanel implements DetailsPanel {
     }
 
     @Override
-    public DetailsPanel newInstance(MapPanel mapPanel) {
-        return new PersonDetailsPanel(mapPanel, map);
+    public DetailsPanel newInstance(DetailsListener dl) {
+        return new PersonDetailsPanel(dl, map);
+    }
+
+    @Override
+    public void onChange(DetailsObject o) {
+        person = (Person) o;
+    }
+
+    @Override
+    public boolean listening(Type t) {
+        return t == PERSON;
     }
 }

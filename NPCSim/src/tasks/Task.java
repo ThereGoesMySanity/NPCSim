@@ -1,10 +1,12 @@
 package tasks;
 
+import main.Main;
 import people.Person;
 import people.PersonListener;
 import people.Stats.Stat;
 import ui.map.TaskDetailsPanel;
 
+import javax.swing.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -19,6 +21,7 @@ public abstract class Task implements DetailsObject, Serializable, PersonListene
     private final ArrayList<Person> participants = new ArrayList<>();
     private final int maxSize;
     private final boolean unique;
+    private transient TaskDetailsPanel tdp;
 
     public Task(boolean temp, int size) {
         this(temp, size, true);
@@ -52,6 +55,7 @@ public abstract class Task implements DetailsObject, Serializable, PersonListene
     }
 
     public void end() {
+        if(tdp != null) tdp.addLabel(new JLabel("Ended " + Main.time));
         taskMan.endTask(this);
         ArrayList<Person> pr = new ArrayList<>(participants);
         pr.forEach(p -> p.removeTask(this));
@@ -97,7 +101,12 @@ public abstract class Task implements DetailsObject, Serializable, PersonListene
     }
 
 
-    public void addToPane(TaskDetailsPanel pane) { }
+    public void addToPane(TaskDetailsPanel pane) {
+        tdp = pane;
+    }
+    public void removePane() {
+        tdp = null;
+    }
 
     public void updatePane() { }
 

@@ -20,7 +20,7 @@ public class ListPanel extends JPanel implements Town.Listener {
     /**
      * Create the panel.
      */
-    ListPanel(AreaMap m, MapPanel mapPanel) {
+    ListPanel(DetailsListener listener, AreaMap m) {
         map = m;
         setLayout(new BorderLayout(0, 0));
         root = new DefaultMutableTreeNode(m);
@@ -33,7 +33,7 @@ public class ListPanel extends JPanel implements Town.Listener {
 
         JTree tree = new JTree(model);
         tree.setCellRenderer(new ListTreeRenderer());
-        tree.addTreeSelectionListener(mapPanel.listener);
+        tree.addTreeSelectionListener(listener);
         scrollPane.setViewportView(tree);
     }
 

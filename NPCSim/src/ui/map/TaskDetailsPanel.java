@@ -18,7 +18,7 @@ public class TaskDetailsPanel extends JPanel implements DetailsPanel {
     /**
      * Create the panel.
      */
-    public TaskDetailsPanel(MapPanel mapPanel) {
+    TaskDetailsPanel(DetailsListener listener) {
         setLayout(new BorderLayout(0, 0));
 
         mainPanel = new JPanel();
@@ -35,23 +35,8 @@ public class TaskDetailsPanel extends JPanel implements DetailsPanel {
         tabbedPane.addTab("People", null, peopleScroll, null);
 
         people = new JList<>();
-        people.addListSelectionListener(mapPanel.listener);
+        people.addListSelectionListener(listener);
         peopleScroll.setViewportView(people);
-    }
-
-    @Override
-    public void setObject(DetailsObject t) {
-        task = (Task) t;
-        if (t == null) return;
-        for (int i = 1; i < tabbedPane.getTabCount(); i++) {
-            tabbedPane.removeTabAt(i);
-        }
-        mainPanel.removeAll();
-        labelIndex = 0;
-        nameLabel = new JLabel(task.toString());
-        addLabel(nameLabel);
-        task.addToPane(this);
-        refresh();
     }
 
     @Override
@@ -69,8 +54,8 @@ public class TaskDetailsPanel extends JPanel implements DetailsPanel {
     }
 
     @Override
-    public DetailsPanel newInstance(MapPanel mapPanel) {
-        return new TaskDetailsPanel(mapPanel);
+    public DetailsPanel newInstance(DetailsListener dl) {
+        return new TaskDetailsPanel(dl);
     }
 
     public void addLabel(JLabel... labels) {
@@ -95,5 +80,25 @@ public class TaskDetailsPanel extends JPanel implements DetailsPanel {
     @Override
     public Type getType() {
         return Type.TASK;
+    }
+
+    @Override
+    public void onChange(DetailsObject o) {
+        task = (Task) o;
+        if (o == null) return;
+        for (int i = 1; i < tabbedPane.getTabCount(); i++) {
+            tabbedPane.removeTabAt(i);
+        }
+        mainPanel.removeAll();
+        labelIndex = 0;
+        nameLabel = new JLabel(task.toString());
+        addLabel(nameLabel);
+        task.addToPane(this);
+        refresh();
+    }
+
+    @Override
+    public boolean listening(Type t) {
+        return t == getType();
     }
 }

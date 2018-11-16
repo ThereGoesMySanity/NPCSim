@@ -1,10 +1,8 @@
 package ui.map;
 
 import main.Main;
-import people.Person;
-import tasks.Task;
+import ui.map.DetailsListener.DLListener;
 import ui.map.DetailsPanel.DetailsObject;
-import ui.other.SearchPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,23 +14,21 @@ import java.util.EnumMap;
 import static ui.map.DetailsPanel.Type;
 import static ui.map.DetailsPanel.Type.*;
 
-@SuppressWarnings("SuspiciousMethodCalls")
-public class MapPanel extends JPanel {
+public class MapPanel extends JPanel implements DLListener {
     private final ArrayList<DetailsPanel> pins = new ArrayList<>();
     private final EnumMap<Type, DetailsPanel> panelMap = new EnumMap<>(Type.class);
+    private DetailsListener listener;
     public final Main main;
-    private SearchPanel searchPanel;
     private final JTabbedPane tabbedPane;
     private final JPopupMenu menu;
     private DetailsPanel tab;
-    final DetailsListener listener = new DetailsListener(this);
     private final JFileChooser fileChooser = new JFileChooser();
     private final ListPanel list;
 
-    public MapPanel(Main main, SearchPanel sp) {
+    public MapPanel(DetailsListener listener, Main main) {
         super(new BorderLayout());
+        this.listener = listener;
         this.main = main;
-        searchPanel = sp;
 
         menu = new JPopupMenu();
         JMenuItem pin = new JMenuItem("Pin");
@@ -62,11 +58,12 @@ public class MapPanel extends JPanel {
         });
         add(tabbedPane, BorderLayout.CENTER);
 
-        panelMap.put(PERSON, new PersonDetailsPanel(this, main.map));
-        panelMap.put(TOWN, new TownDetailsPanel(this));
-        panelMap.put(TASK, new TaskDetailsPanel(this));
+        panelMap.put(PERSON, new PersonDetailsPanel(listener, main.map));
+        panelMap.put(TOWN, new TownDetailsPanel(listener));
+        panelMap.put(TASK, new TaskDetailsPanel(listener));
+        panelMap.forEach((k, v) -> listener.addListener(v));
 
-        list = new ListPanel(main.map, this);
+        list = new ListPanel(listener, main.map);
         add(list, BorderLayout.WEST);
     }
 
@@ -79,35 +76,14 @@ public class MapPanel extends JPanel {
         return panelMap.get(type);
     }
 
-    public void add(DetailsObject obj) {
-        if(obj != null) set(obj.getType(), obj);
-    }
-
-    private void set(Type type, DetailsObject o) {
-        if(o != null) {
-            switch (type) {
-                case TASK:
-                    Main.taskMan.panes.remove(panelMap.get(type).getObject());
-                    Main.taskMan.panes.put((Task) o, (TaskDetailsPanel) panelMap.get(type));
-                    break;
-                case PERSON:
-                    searchPanel.setSelectedPerson((Person) o);
-                    break;
-            }
-            panelMap.get(type).setObject(o);
-            addTab(type);
-        }
-    }
-
     private void pin() {
         pins.add(tab);
-        panelMap.put(tab.getType(), tab.newInstance(this));
+        panelMap.put(tab.getType(), tab.newInstance(listener));
     }
 
     private void unpin() {
         pins.remove(tab);
         tabbedPane.remove(tab.toComponent());
-        if(tab.getType() == TASK) Main.taskMan.panes.remove(tab.getObject());
     }
 
     public void reload() {
@@ -127,5 +103,15 @@ public class MapPanel extends JPanel {
         if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             main.load(fileChooser.getSelectedFile());
         }
+    }
+
+    @Override
+    public void onChange(DetailsObject o) {
+        if(o != null) addTab(o.getType());
+    }
+
+    @Override
+    public boolean listening(Type t) {
+        return true;
     }
 }

@@ -1,13 +1,15 @@
 package ui.other;
 
 import people.Person;
+import ui.map.DetailsListener.DLListener;
+import ui.map.DetailsPanel;
 import util.Convert;
 import util.TreePath;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SearchPanel extends JPanel {
+public class SearchPanel extends JPanel implements DLListener {
     private Person person1, person2, selectedPerson;
     private final JTextField p1;
     private final JTextField p2;
@@ -71,10 +73,17 @@ public class SearchPanel extends JPanel {
         person2 = selectedPerson;
         p2.setText(person2.toString());
     }
-    public void setSelectedPerson(Person p) {
-        selectedPerson = p;
-    }
     private void exec() {
         if(person1 != null && person2 != null) Convert.listToJList(TreePath.shortestPath(person1, person2), path);
+    }
+
+    @Override
+    public void onChange(DetailsPanel.DetailsObject o) {
+        selectedPerson = (Person) o;
+    }
+
+    @Override
+    public boolean listening(DetailsPanel.Type t) {
+        return t == DetailsPanel.Type.PERSON;
     }
 }

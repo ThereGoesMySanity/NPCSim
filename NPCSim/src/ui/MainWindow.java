@@ -1,12 +1,14 @@
 package ui;
 
 import main.Main;
+import ui.map.DetailsListener;
 import ui.map.MapPanel;
 import ui.map.SkipDialog;
 import ui.other.GeneratorPanel;
 import ui.other.NamesPanel;
 import ui.other.SearchPanel;
-import ui.vars.VariablePane;
+import ui.other.TreePanel;
+import ui.vars.VarsPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -52,18 +54,25 @@ public class MainWindow extends JFrame {
 
         JTabbedPane tabbedPane = new JTabbedPane();
         contentPane.add(tabbedPane, BorderLayout.CENTER);
+        DetailsListener listener = new DetailsListener();
+        mapPanel = new MapPanel(listener, main);
+        tabbedPane.addTab("Towns", mapPanel);
+        listener.addListener(mapPanel);
+
+        VarsPanel varPane = new VarsPanel(Main.vars);
+        tabbedPane.addTab("Variables", varPane);
 
         SearchPanel searchPanel = new SearchPanel();
-        mapPanel = new MapPanel(main, searchPanel);
-        tabbedPane.addTab("Towns", mapPanel);
-
-        tabbedPane.addTab("Variables", new VariablePane(Main.vars));
-
         tabbedPane.addTab("Search", searchPanel);
+        listener.addListener(searchPanel);
 
         tabbedPane.addTab("Generators", new GeneratorPanel());
 
         tabbedPane.addTab("Names", new NamesPanel());
+
+        TreePanel treePanel = new TreePanel();
+        tabbedPane.addTab("Family Tree", treePanel);
+        listener.addListener(treePanel);
 
         JPanel buttonPanel = new JPanel();
         add(buttonPanel, BorderLayout.SOUTH);
