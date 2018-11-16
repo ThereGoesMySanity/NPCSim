@@ -34,7 +34,7 @@ public class Married extends Task {
                 && babbyRace != null
                 && p.getAge() < p.getRace().getAge() / 2
                 && p.gender == 1
-                && rand.nextInt(vars.get(BIRTH_CHANCE)) == 0) {
+                && rand.nextInt(vars.get(BIRTH_CHANCE) * p.getRace().getAge() / 80) == 0) {
             Person babby = new Person(p.getTown(), p.getLastName(), 0, babbyRace);
             people().forEach(p1 -> p1.record("BABBY HAS CREATE"));
             babby.getNode().setParents(p);

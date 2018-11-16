@@ -27,6 +27,9 @@ public class TreeNode {
     public void setSpouse(Person spouse) {
         this.spouse = spouse.getNode();
     }
+    public String toString() {
+        return value.toString();
+    }
 }
 //    public TreeNode getRoot(Person p) {
 //        TreeNode node = p.getNode();

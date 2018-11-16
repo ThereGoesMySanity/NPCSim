@@ -42,18 +42,32 @@ public class TreePanel extends JPanel implements DLListener {
         Dimension[] d = calcWidths(widths, layers, node);
         setPreferredSize(new Dimension(Math.max(d[0].width, d[1].width),
                 d[0].height + d[1].height - PERSON_SIZE));
-        drawUp(g, node, layers, (getWidth() - d[0].width) / 2, 0, d[0].height);
+        drawUp(g, node, layers, (getWidth() - d[0].width) / 2,
+                layers.size() * (PERSON_SIZE + VSPACING) + PERSON_SIZE);
         drawDown(g, node, widths, (getWidth() - d[1].width)/2, d[0].height - PERSON_SIZE);
     }
-    private Point drawUp(Graphics g, TreeNode node, ArrayList<ArrayList<Map.Entry<TreeNode, Integer>>> layers,
-                         int x, int y, int height) {
+    private void drawUp(Graphics g, TreeNode node, ArrayList<ArrayList<Map.Entry<TreeNode, Integer>>> layers,
+                        int x, int height) {
         FontMetrics fm = g.getFontMetrics();
         for(int i = 0; i < layers.size(); i++) {
+            System.out.println(layers.get(i));
             int offset = 0;
             for(Map.Entry<TreeNode, Integer> entry : layers.get(i)) {
                 String str = nodeToString(entry.getKey());
-                g.drawString();
+                Point p1 = new Point(x + offset + entry.getValue()/2,
+                        height - i * (PERSON_SIZE + VSPACING) - PERSON_SIZE / 2);
+                g.drawString(str, p1.x - fm.stringWidth(str), p1.y + PERSON_SIZE / 2);
                 offset += entry.getValue();
+                if(i > 0) {
+                    int offset2 = 0;
+                    for(Map.Entry<TreeNode, Integer> entry2 : layers.get(i - 1)) {
+                        if(entry.getKey().children.contains(entry2.getKey())) {
+                            Point p2 = new Point(x + offset2 + entry2.getValue()/2,
+                                    height - (i - 1) * (PERSON_SIZE + VSPACING) - PERSON_SIZE / 2);
+                            g.drawLine(p1.x, p1.y, p2.x, p2.y);
+                        }
+                    }
+                }
             }
         }
     }
@@ -82,14 +96,15 @@ public class TreePanel extends JPanel implements DLListener {
         if(depth > UPPER_LIMIT) return new Dimension();
         added.add(localRoot);
         layers.add(new ArrayList<>());
-        Dimension d = expandUp(layers, added, localRoot.parents[0], depth + 1);
+        Dimension d = new Dimension(getSize(localRoot), 0);
+        if(localRoot.parents.length > 0) d = expandUp(layers, added, localRoot.parents[0], depth + 1);
         int width = localRoot.children.stream().mapToInt(c -> expandBackDown(layers, added, c, depth - 1)).sum();
         layers.get(depth).add(Map.entry(localRoot, width));
         if(localRoot.spouse != null && localRoot.spouse.parents.length > 0) {
             Dimension d2 = expandUp(layers, added, localRoot.spouse.parents[0], depth + 1);
-            d.setSize(d2.width+d.width, Math.max(d.height, d2.height));
+            d.setSize(d2.width+d.width, 0);
         }
-        return new Dimension(Math.max(width, d.width), depth * PERSON_SIZE + (depth - 1) * VSPACING);
+        return new Dimension(Math.max(width, d.width), 0);
     }
     private int expandBackDown(ArrayList<ArrayList<Map.Entry<TreeNode, Integer>>> layers, HashSet<TreeNode> added,
                                 TreeNode localRoot, int depth) {
