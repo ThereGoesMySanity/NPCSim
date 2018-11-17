@@ -5,7 +5,6 @@ import util.TreeNode;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,7 +20,7 @@ public class TreePanel extends JPanel implements DLListener {
             PERSON_SIZE = 40,
             HSPACING = 120,
             VSPACING = 60,
-            UPPER_LIMIT = 2,
+            UPPER_LIMIT = Integer.MAX_VALUE,
             LOWER_LIMIT = Integer.MAX_VALUE;
 
     private Person person;
@@ -50,16 +49,16 @@ public class TreePanel extends JPanel implements DLListener {
                 d[0].height + d[1].height - PERSON_SIZE));
         int x = getWidth() / 2;
         if(layers.size() > 1) {
-            g.setColor(Color.CYAN);
-            g.fillRect(x - d[0].width / 2, 0, d[0].width, d[0].height);
+//            g.setColor(Color.CYAN);
+//            g.fillRect(x - d[0].width / 2, 0, d[0].width, d[0].height);
             x = drawUp(g, node, layers, x - d[0].width / 2,
-                    d[0].width, layers.size() * (PERSON_SIZE + VSPACING) + PERSON_SIZE).x;
+                    d[0].width, d[0].height).x;
         }
-        if(widths.size() > 1) drawDown(g, node, widths, x - d[1].width/2, layers.size() * (PERSON_SIZE + VSPACING) + PERSON_SIZE / 2);
+        if(widths.size() > 1) drawDown(g, node, widths, x - d[1].width/2,
+                d[0].height - PERSON_SIZE);
     }
     private Point drawUp(Graphics g, TreeNode root, ArrayList<ArrayList<TreeNode>> layers,
                         int x, int width, int height) {
-        FontMetrics fm = g.getFontMetrics();
         Point p = new Point();
         ArrayList<Integer> widths = new ArrayList<>();
         layers.stream().map(arr -> arr.stream().mapToInt(this::getSize).sum())
@@ -68,9 +67,6 @@ public class TreePanel extends JPanel implements DLListener {
             for(int j = 0; j < layers.get(i).size(); j++) {
                 Point p1 = getPoint(layers, widths, x, width, height, i, j);
                 TreeNode entry = layers.get(i).get(j);
-                g.setColor(Color.GRAY);
-                g.drawRect(p1.x - (getSize(entry) - HSPACING) / 2, p1.y - PERSON_SIZE / 2,
-                        getSize(entry) - HSPACING, PERSON_SIZE);
                 g.setColor(Color.BLACK);
                 drawNode(g, entry, p1);
                 if(i < layers.size() - 1) {
@@ -109,7 +105,11 @@ public class TreePanel extends JPanel implements DLListener {
         int offset = 0;
         for(TreeNode n : node.children) {
             Point p1 = drawDown(g, n, widths, x + offset, y + VSPACING + PERSON_SIZE);
-            g.drawLine(p.x, p.y, p1.x, p1.y);
+            int xOff = 0;
+            if(n.spouse != null) {
+                xOff = -PERSON_SIZE / 2;
+            }
+            g.drawLine(p.x, p.y, p1.x + xOff, p1.y);
             offset += widths.get(n);
         }
         return p;
@@ -122,19 +122,28 @@ public class TreePanel extends JPanel implements DLListener {
                 .mapToInt(arr -> arr.stream()
                         .mapToInt(this::getSize).sum()
                 ).max().orElse(0),
-                layers.size() * (PERSON_SIZE + VSPACING) + PERSON_SIZE), d};
+                (layers.size() - 1) * (PERSON_SIZE + VSPACING) + PERSON_SIZE), d};
     }
     private void expandUp(ArrayList<ArrayList<TreeNode>> layers, HashSet<TreeNode> added,
                          TreeNode localRoot, int depth) {
-        if(depth > UPPER_LIMIT) return;
+        if(depth > UPPER_LIMIT || added.contains(localRoot)) return;
         added.add(localRoot);
-        if(layers.size() <= UPPER_LIMIT)layers.add(new ArrayList<>());
-        if(localRoot.parents.length > 0) expandUp(layers, added, localRoot.parents[0], depth + 1);
-        localRoot.children.forEach(c -> expandBackDown(layers, added, c, depth - 1));
-        layers.get(depth).add(localRoot);
-        if(localRoot.spouse != null && localRoot.spouse.parents.length > 0) {
+        if(layers.size() <= UPPER_LIMIT) layers.add(new ArrayList<>());
+        if(localRoot.parents.length > 0) {
+            expandUp(layers, added, localRoot.parents[0], depth + 1);
+        } else if(localRoot.spouse != null) {
             added.add(localRoot.spouse);
-            expandUp(layers, added, localRoot.spouse.parents[0], depth + 1);
+            if(localRoot.spouse.parents.length > 0) {
+                expandUp(layers, added, localRoot.spouse.parents[0], depth + 1);
+            }
+        }
+        localRoot.children.forEach(c -> expandBackDown(layers, added, c, depth - 1));
+        if(!layers.get(depth).contains(localRoot.spouse))layers.get(depth).add(localRoot);
+        if(localRoot.spouse != null && !added.contains(localRoot.spouse)) {
+            added.add(localRoot.spouse);
+            if(localRoot.spouse.parents.length > 0) {
+                expandUp(layers, added, localRoot.spouse.parents[0], depth + 1);
+            }
         }
     }
     private void expandBackDown(ArrayList<ArrayList<TreeNode>> layers, HashSet<TreeNode> added,
@@ -164,22 +173,28 @@ public class TreePanel extends JPanel implements DLListener {
         return PERSON_SIZE * (n.spouse != null? 2 : 1) + HSPACING;
     }
     private void drawNode(Graphics g, TreeNode node, Point p) {
-        g.drawRect(p.x - (getSize(node) + HSPACING) / 2, p.y - PERSON_SIZE / 2,
+        g.setColor(Color.GRAY);
+        g.drawRect(p.x - (getSize(node) - HSPACING) / 2, p.y - PERSON_SIZE / 2,
                 getSize(node) - HSPACING, PERSON_SIZE);
-        FontMetrics fm = g.getFontMetrics();
-        String s0 = node.value.toString().replace(' ', '\n');
-        Rectangle2D rect0 = fm.getStringBounds(s0, g);
+        g.setColor(Color.BLACK);
         if(node.spouse != null) {
-            String s1 = node.spouse.value.toString().replace(' ', '\n');
-            Rectangle2D rect1 = fm.getStringBounds(s1, g);
+            FontMetrics fm = g.getFontMetrics();
             String plus = "+";
-            Rectangle2D plusRect = fm.getStringBounds(plus, g);
-            g.drawString(s0, (int)(p.x - rect0.getWidth() - plusRect.getWidth() / 2),
-                             (int)(p.y - rect0.getHeight() / 2));
-            g.drawString(plus, (int)(p.x - plusRect.getWidth() / 2), (int)(p.y - plusRect.getHeight() / 2));
-            g.drawString(s1, (int)(p.x + plusRect.getWidth() / 2), (int)(p.y - rect1.getHeight() / 2));
+            int plusWidth = fm.stringWidth(plus);
+            g.drawString(plus, p.x - plusWidth / 2, p.y + fm.getHeight() / 2);
+            drawText(g, node.toString(), p.x - plusWidth / 2, p.y, -1);
+            drawText(g, node.spouse.toString(), p.x + plusWidth / 2, p.y, 1);
         } else {
-            g.drawString(s0, (int)(p.x - rect0.getWidth() / 2), (int)(p.y - rect0.getHeight() / 2));
+            drawText(g, node.toString(), p.x, p.y, 0);
+        }
+    }
+    private void drawText(Graphics g, String text, int x, int y, int offset) {
+        FontMetrics fm = g.getFontMetrics();
+        String[] ss = text.split(" ");
+        int width = Arrays.stream(ss).mapToInt(fm::stringWidth).max().orElse(0);
+        for(int i = 0; i < ss.length; i++) {
+            g.drawString(ss[i], x + (offset * width - fm.stringWidth(ss[i])) / 2,
+                    y + fm.getHeight() * (2 * i + 2 - ss.length) / 2);
         }
     }
 
