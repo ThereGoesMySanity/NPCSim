@@ -101,7 +101,6 @@ public class TreePanel extends JPanel implements DLListener {
     private Point drawDown(Graphics g, TreeNode node, HashMap<TreeNode, Integer> widths, int x, int y) {
         Point p = new Point(x + widths.get(node)/2,
                 y + PERSON_SIZE / 2);
-        drawNode(g, node, p);
         int offset = 0;
         for(TreeNode n : node.children) {
             Point p1 = drawDown(g, n, widths, x + offset, y + VSPACING + PERSON_SIZE);
@@ -109,9 +108,12 @@ public class TreePanel extends JPanel implements DLListener {
             if(n.spouse != null) {
                 xOff = -PERSON_SIZE / 2;
             }
+            g.setColor(Color.GRAY);
             g.drawLine(p.x, p.y, p1.x + xOff, p1.y);
+            g.setColor(Color.BLACK);
             offset += widths.get(n);
         }
+        drawNode(g, node, p);
         return p;
     }
     private Dimension[] calcWidths(HashMap<TreeNode, Integer> widths,
