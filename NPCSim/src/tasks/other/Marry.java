@@ -6,7 +6,6 @@ import tasks.Task;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 import static main.Main.taskMan;
 import static main.Main.vars;
@@ -46,7 +45,7 @@ public class Marry extends Task {
                                 && p.normalizedAge() >= p1.normalizedAge() / 2 + 7
                                 //NO INCEST
                                 && Arrays.stream(p.getNode().parents)
-                                    .flatMap(pn -> pn.children.stream()).noneMatch(Predicate.isEqual(p1))
+                                    .noneMatch(pn -> p1.getNode().isParent(pn))
                 )
                 .max(Comparator.comparingDouble(p::getRel)).orElse(null);
     }

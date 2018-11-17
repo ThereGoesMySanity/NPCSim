@@ -4,6 +4,7 @@ import people.Person;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 public class TreeNode {
     public Person value;
@@ -26,6 +27,9 @@ public class TreeNode {
     }
     public void setSpouse(Person spouse) {
         this.spouse = spouse.getNode();
+    }
+    public boolean isParent(TreeNode t) {
+        return Arrays.stream(parents).anyMatch(Predicate.isEqual(t));
     }
     public String toString() {
         return value.toString();
