@@ -20,6 +20,6 @@ public class AreaMap implements Serializable {
 
     @Override
     public String toString() {
-        return "AreaMap Name"; //TODO
+        return "Map Name"; //TODO
     }
 }

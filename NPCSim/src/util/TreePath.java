@@ -27,11 +27,12 @@ public class TreePath {
         }
     }
 
-    public static <T extends Children<T>> List<T> shortestPath(T start, T end) {
+    public static <T extends Children<T>> List<T> shortestPath(T start, T end, int limit) {
         Set<T> checked = new HashSet<>();
         List<Node<T>> next, current = new ArrayList<>();
         current.add(new Node<>(start, null));
         Node<T> last = null;
+        int length = 0;
         while (last == null) {
             next = new ArrayList<>();
             for (Node<T> p : current) {
@@ -46,7 +47,8 @@ public class TreePath {
                             .forEach(next::add);
                 }
             }
-            if(next.size() == 0) {
+            length++;
+            if(next.size() == 0 || length == limit) {
                 break;
             }
             current = next;

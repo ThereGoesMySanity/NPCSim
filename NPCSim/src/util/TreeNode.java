@@ -5,8 +5,9 @@ import people.Person;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
-public class TreeNode {
+public class TreeNode implements TreePath.Children<Person> {
     public Person value;
     public TreeNode[] parents = new TreeNode[0];
     public TreeNode spouse;
@@ -22,7 +23,7 @@ public class TreeNode {
         parents[p.getSpouse().gender] = p.getSpouse().getNode();
         Arrays.stream(parents).forEach(n -> n.addChild(this));
     }
-    public void addChild(TreeNode node) {
+    private void addChild(TreeNode node) {
         children.add(node);
     }
     public void setSpouse(Person spouse) {
@@ -33,6 +34,11 @@ public class TreeNode {
     }
     public String toString() {
         return value.toString();
+    }
+
+    @Override
+    public Stream<Person> children() {
+        return Stream.concat(children.stream(), Arrays.stream(parents)).map(n -> n.value);
     }
 }
 //    public TreeNode getRoot(Person p) {

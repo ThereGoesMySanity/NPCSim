@@ -30,7 +30,7 @@ public class Fight extends TownTask {
 
     public Fight(Town t) {
         super(t);
-        double level = 1 + rand.nextGaussian() * vars.get(MONSTER_LEVEL_CHANCE);
+        double level = 0.5 + rand.nextGaussian() * vars.get(MONSTER_LEVEL_CHANCE);
         if(level < 0) level = 0;
         monster = tables.monsterGen.getMonster(t, (float) level);
         hp = monster.getHP();
@@ -81,14 +81,11 @@ public class Fight extends TownTask {
     public void updatePost() {
         if (worked.size() > 0) {
             Person p = Weight.choose(worked);
-            if (people().contains(p)) {
-                //TODO: fix
-                int newhp = squadHP.get(p) - monster.attack();
-                if (newhp < 0) {
-                    p.die("their injuries");
-                } else {
-                    squadHP.put(p, newhp);
-                }
+            int newhp = squadHP.get(p) - monster.attack();
+            if (newhp < 0) {
+                p.die("their injuries");
+            } else {
+                squadHP.put(p, newhp);
             }
             groupInteract(2, 1.5);
         }

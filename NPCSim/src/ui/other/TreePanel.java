@@ -49,8 +49,6 @@ public class TreePanel extends JPanel implements DLListener {
                 d[0].height + d[1].height - PERSON_SIZE));
         int x = getWidth() / 2;
         if(layers.size() > 1) {
-//            g.setColor(Color.CYAN);
-//            g.fillRect(x - d[0].width / 2, 0, d[0].width, d[0].height);
             x = drawUp(g, node, layers, x - d[0].width / 2,
                     d[0].width, d[0].height).x;
         }
@@ -67,9 +65,8 @@ public class TreePanel extends JPanel implements DLListener {
             for(int j = 0; j < layers.get(i).size(); j++) {
                 Point p1 = getPoint(layers, widths, x, width, height, i, j);
                 TreeNode entry = layers.get(i).get(j);
-                g.setColor(Color.BLACK);
-                drawNode(g, entry, p1);
                 if(i < layers.size() - 1) {
+                    g.setColor(Color.GRAY);
                     for(int k = 0; k < layers.get(i + 1).size(); k++) {
                         TreeNode entry2 = layers.get(i + 1).get(k);
                         if(entry.isParent(entry2)
@@ -79,10 +76,13 @@ public class TreePanel extends JPanel implements DLListener {
                             if(entry.spouse != null) {
                                 xOff = PERSON_SIZE / (entry.spouse.isParent(entry2)? 2 : -2);
                             }
+
                             g.drawLine(p1.x + xOff, p1.y, p2.x, p2.y);
                         }
                     }
+                    g.setColor(Color.BLACK);
                 }
+                drawNode(g, entry, p1);
                 if(entry.equals(root)) {
                     p = p1;
                 }
@@ -116,7 +116,7 @@ public class TreePanel extends JPanel implements DLListener {
     }
     private Dimension[] calcWidths(HashMap<TreeNode, Integer> widths,
                                    ArrayList<ArrayList<TreeNode>> layers, TreeNode localRoot) {
-        expandUp(layers, new HashSet<>(), localRoot, 0);
+        expandUp(layers, new HashSet<>(), localRoot, 0, true);
         Dimension d = expandDown(widths, localRoot, 0);
         return new Dimension[]{new Dimension(layers.stream()
                 .mapToInt(arr -> arr.stream()
@@ -125,24 +125,24 @@ public class TreePanel extends JPanel implements DLListener {
                 (layers.size() - 1) * (PERSON_SIZE + VSPACING) + PERSON_SIZE), d};
     }
     private void expandUp(ArrayList<ArrayList<TreeNode>> layers, HashSet<TreeNode> added,
-                         TreeNode localRoot, int depth) {
+                         TreeNode localRoot, int depth, boolean leftFree) {
         if(depth > UPPER_LIMIT || added.contains(localRoot)) return;
         added.add(localRoot);
-        if(layers.size() <= UPPER_LIMIT) layers.add(new ArrayList<>());
+        if(layers.size() <= depth) layers.add(new ArrayList<>());
         if(localRoot.parents.length > 0) {
-            expandUp(layers, added, localRoot.parents[0], depth + 1);
-        } else if(localRoot.spouse != null) {
+            expandUp(layers, added, localRoot.parents[0], depth + 1, false);
+        } else if(leftFree && localRoot.spouse != null) {
             added.add(localRoot.spouse);
             if(localRoot.spouse.parents.length > 0) {
-                expandUp(layers, added, localRoot.spouse.parents[0], depth + 1);
+                expandUp(layers, added, localRoot.spouse.parents[0], depth + 1, false);
             }
         }
         localRoot.children.forEach(c -> expandBackDown(layers, added, c, depth - 1));
-        if(!layers.get(depth).contains(localRoot.spouse))layers.get(depth).add(localRoot);
+        if(!layers.get(depth).contains(localRoot.spouse)) layers.get(depth).add(localRoot);
         if(localRoot.spouse != null && !added.contains(localRoot.spouse)) {
             added.add(localRoot.spouse);
             if(localRoot.spouse.parents.length > 0) {
-                expandUp(layers, added, localRoot.spouse.parents[0], depth + 1);
+                expandUp(layers, added, localRoot.spouse.parents[0], depth + 1, leftFree);
             }
         }
     }

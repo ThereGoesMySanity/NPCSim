@@ -15,13 +15,13 @@ public class Variables {
         FIGHT_WEIGHT,
         MOVE_WEIGHT,
         MONSTER_LEVEL_CHANCE,
+        SPAWN_CHANCE,
     }
 
     public enum Ints {
         TASKS,
         MONSTER_CHANCE,
         ADVENTURER_WEIGHT,
-        SPAWN_WEIGHT,
         BIRTH_CHANCE,
     }
 
@@ -37,8 +37,8 @@ public class Variables {
         vars.put(FIGHT_WEIGHT, 0.1);
         vars.put(MOVE_WEIGHT, 0.1);
         vars.put(MONSTER_LEVEL_CHANCE, 0.3);
+        vars.put(SPAWN_CHANCE, 0.2);
         varInts.put(ADVENTURER_WEIGHT, 20);
-        varInts.put(SPAWN_WEIGHT, 150);
         varInts.put(TASKS, 1);
         varInts.put(MONSTER_CHANCE, 10);
         varInts.put(BIRTH_CHANCE, 50);

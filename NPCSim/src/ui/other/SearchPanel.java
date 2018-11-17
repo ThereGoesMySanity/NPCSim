@@ -74,7 +74,8 @@ public class SearchPanel extends JPanel implements DLListener {
         p2.setText(person2.toString());
     }
     private void exec() {
-        if(person1 != null && person2 != null) Convert.listToJList(TreePath.shortestPath(person1, person2), path);
+        if(person1 != null && person2 != null)
+            Convert.listToJList(TreePath.shortestPath(person1, person2, Integer.MAX_VALUE), path);
     }
 
     @Override

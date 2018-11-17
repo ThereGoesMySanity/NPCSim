@@ -16,8 +16,8 @@ import static main.Main.*;
 import static people.Stats.Stat.CON;
 import static ui.map.DetailsPanel.DetailsObject;
 import static ui.map.DetailsPanel.Type;
+import static util.Variables.Doubles.SPAWN_CHANCE;
 import static util.Variables.Ints.MONSTER_CHANCE;
-import static util.Variables.Ints.SPAWN_WEIGHT;
 
 public class Town implements DetailsObject, Serializable {
     public interface Listener {
@@ -63,8 +63,7 @@ public class Town implements DetailsObject, Serializable {
     }
 
     public void update() {
-        if(rand.nextInt(vars.get(SPAWN_WEIGHT) * 10 / startPop) == 0
-                || residents.size() < 5) {
+        if(residents.size() < startPop && rand.nextDouble() < vars.get(SPAWN_CHANCE)) {
             new Person(this, 15);
         }
         taskMan.addTasks(this, Map.of(
