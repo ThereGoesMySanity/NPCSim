@@ -31,6 +31,7 @@ public class PersonDetailsPanel extends DetailsPanel {
     private final JEditorPane notes;
     private final AreaMap map;
     private JTextArea personality;
+    private JLabel gender;
 
     /**
      * Create the panel.
@@ -89,13 +90,20 @@ public class PersonDetailsPanel extends DetailsPanel {
         gbc_lblStats.gridx = 0;
         gbc_lblStats.gridy = 1;
         infoPanel.add(lblStats, gbc_lblStats);
-
-        age = new JLabel("Age:");
-        GridBagConstraints gbc_age = new GridBagConstraints();
-        gbc_age.insets = new Insets(0, 0, 5, 5);
-        gbc_age.gridx = 1;
-        gbc_age.gridy = 1;
-        infoPanel.add(age, gbc_age);
+        
+        gender = new JLabel("M/F");
+        GridBagConstraints gbc_gender = new GridBagConstraints();
+        gbc_gender.insets = new Insets(0, 0, 5, 5);
+        gbc_gender.gridx = 1;
+        gbc_gender.gridy = 1;
+        infoPanel.add(gender, gbc_gender);
+        
+                age = new JLabel("Age:");
+                GridBagConstraints gbc_age = new GridBagConstraints();
+                gbc_age.insets = new Insets(0, 0, 5, 5);
+                gbc_age.gridx = 2;
+                gbc_age.gridy = 1;
+                infoPanel.add(age, gbc_age);
 
         level = new JLabel("Level");
         GridBagConstraints gbc_level = new GridBagConstraints();
@@ -110,13 +118,13 @@ public class PersonDetailsPanel extends DetailsPanel {
         gbc_stats.gridx = 0;
         gbc_stats.gridy = 2;
         infoPanel.add(stats, gbc_stats);
-
-        race = new JLabel("race");
-        GridBagConstraints gbc_race = new GridBagConstraints();
-        gbc_race.insets = new Insets(0, 0, 5, 5);
-        gbc_race.gridx = 1;
-        gbc_race.gridy = 2;
-        infoPanel.add(race, gbc_race);
+        
+                race = new JLabel("race");
+                GridBagConstraints gbc_race = new GridBagConstraints();
+                gbc_race.insets = new Insets(0, 0, 5, 5);
+                gbc_race.gridx = 1;
+                gbc_race.gridy = 2;
+                infoPanel.add(race, gbc_race);
 
         JLabel lblXp = new JLabel("XP");
         GridBagConstraints gbc_lblXp = new GridBagConstraints();
@@ -170,7 +178,7 @@ public class PersonDetailsPanel extends DetailsPanel {
         GridBagConstraints gbc_personality = new GridBagConstraints();
         gbc_personality.gridwidth = 3;
         gbc_personality.gridheight = 2;
-        gbc_personality.insets = new Insets(0, 0, 5, 5);
+        gbc_personality.insets = new Insets(0, 0, 5, 0);
         gbc_personality.gridx = 1;
         gbc_personality.gridy = 5;
         gbc_personality.fill = GridBagConstraints.BOTH;
@@ -269,8 +277,9 @@ public class PersonDetailsPanel extends DetailsPanel {
         xp.setText(person.xp + "");
         notes.setText(person.getNotes());
         alignment.setText(person.getAlignment().toString());
-        age.setText("Age " + person.getAge());
+        age.setText(person.getAge() + " year(s) old");
         race.setText(person.getRace().toString());
+        gender.setText(person.gender==0?"Male":"Female");
         personality.setText(person.personality);
         if (person.getSpouse() != null) spouse.setText(person.getSpouse().toString());
         else spouse.setText("None");
