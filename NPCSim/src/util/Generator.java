@@ -10,7 +10,10 @@ import java.util.Map;
 public class Generator {
     private final ArrayList<Map.Entry<String, Map.Entry<String, Integer>[]>> tables = new ArrayList<>(); //poor man's hashmap
     private boolean flat = false;
+    private String name;
     Generator(Path p) {
+        name = p.getFileName().toString();
+        name = name.substring(0, name.length() - 4);
         try {
             Iterator<String> iter = Files.lines(p).iterator();
             while(iter.hasNext()) {
@@ -34,5 +37,8 @@ public class Generator {
                 .append(Weight.weightedChoice(Map.Entry::getValue, e.getValue()).getKey())
                 .append(flat?"":'\n'));
         return sb.toString();
+    }
+    public String toString() {
+        return name;
     }
 }

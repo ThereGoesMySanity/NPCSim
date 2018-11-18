@@ -5,8 +5,6 @@ import util.TreeNode;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.*;
 
 import static ui.map.DetailsListener.DLListener;
@@ -14,7 +12,7 @@ import static ui.map.DetailsPanel.DetailsObject;
 import static ui.map.DetailsPanel.Type;
 import static ui.map.DetailsPanel.Type.PERSON;
 
-public class TreePanel extends JPanel implements DLListener, ComponentListener {
+public class TreePanel extends JPanel implements DLListener {
     private static final int
             PERSON_SIZE = 40,
             HSPACING = 120,
@@ -29,15 +27,14 @@ public class TreePanel extends JPanel implements DLListener, ComponentListener {
     private Rectangle[] dimensions = new Rectangle[2];
     private boolean update = false;
 
-    public TreePanel() {
-        addComponentListener(this);
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (update) update();
-        if (person != null) redraw(g);
+        if (person != null) {
+            updateSpacing();
+            redraw(g);
+        }
     }
 
     @Override
@@ -67,7 +64,6 @@ public class TreePanel extends JPanel implements DLListener, ComponentListener {
         dimensions[1] = new Rectangle(new Point(0, dimensions[0].height - PERSON_SIZE), down);
         int x = getPoint(0, layers.get(0).indexOf(localRoot)).x;
         int offset = x - down.width / 2;
-        System.out.println(offset);
         dimensions[0].x = Math.max(-offset, 0);
         dimensions[1].x = Math.max(offset, 0);
         Dimension minSize = new Dimension(Arrays.stream(dimensions).mapToInt(d -> d.x + d.width).max().orElse(0),
@@ -148,7 +144,6 @@ public class TreePanel extends JPanel implements DLListener, ComponentListener {
         g.fillRect(0, 0, getWidth(), getHeight());
         g.setColor(Color.BLACK);
         TreeNode node = this.person.getNode();
-        System.out.println(Arrays.toString(dimensions));
         drawUp(g);
         if (widths.size() > 1)
             drawDown(g, node, dimensions[1].x, dimensions[1].y);
@@ -234,22 +229,5 @@ public class TreePanel extends JPanel implements DLListener, ComponentListener {
     @Override
     public boolean listening(Type t) {
         return t == PERSON;
-    }
-
-    @Override
-    public void componentResized(ComponentEvent e) {
-        updateSpacing();
-    }
-
-    @Override
-    public void componentMoved(ComponentEvent e) {
-    }
-
-    @Override
-    public void componentShown(ComponentEvent e) {
-    }
-
-    @Override
-    public void componentHidden(ComponentEvent e) {
     }
 }

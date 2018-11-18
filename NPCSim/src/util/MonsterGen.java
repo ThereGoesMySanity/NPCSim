@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 public class MonsterGen {
     private final HashMap<String, Monster[]> monsters = new HashMap<>();
-    public MonsterGen() {
+    MonsterGen() {
         Supplier<Stream<String>> ss = () -> {
             try {
                 return Files.lines(Paths.get("resources", "monsters", "all.tsv"));
@@ -40,8 +40,12 @@ public class MonsterGen {
             monsters.put(k, v.toArray(new Monster[0]));
         });
     }
-    public Monster getMonster(Town t, float limit) {
+    public Monster[] getMonsters(String[] locales, float lower, float upper) {
+        return Arrays.stream(locales).map(monsters::get).flatMap(Arrays::stream)
+                .filter(m -> m.getCR() > lower).filter(m -> m.getCR() < upper).toArray(Monster[]::new);
+    }
+    public Monster getMonster(Town t, float lower, float upper) {
         String env = Tables.chooseFile(monsters, () -> Arrays.stream(t.locales()));
-        return Weight.chooseSorted(monsters.get(env), limit, Monster::getCR);
+        return Weight.chooseSorted(monsters.get(env), lower, upper, Monster::getCR);
     }
 }

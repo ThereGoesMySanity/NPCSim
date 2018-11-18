@@ -42,12 +42,13 @@ public class Weight {
         return items[rand.nextInt(items.length)];
     }
 
-    static <K, T extends Comparable<T>> K chooseSorted(K[] items, T limit, Function<K, T> func) {
+    static <K, T extends Comparable<T>> K chooseSorted(K[] items, T lower, T upper, Function<K, T> func) {
         int i = 0;
-        while (func.apply(items[i]).compareTo(limit) <= 0) i++;
-        return choose(items, 0, i);
+        while (lower != null && func.apply(items[i]).compareTo(lower) <= 0) i++;
+        int j = i;
+        while(func.apply(items[j]).compareTo(upper) <= 0) j++;
+        return choose(items, i, j + 1);
     }
-
     public static <K> K choose(K[] items, int min, int max) {
         return items[rand.nextInt(max - min) + min];
     }

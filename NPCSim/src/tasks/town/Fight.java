@@ -32,7 +32,7 @@ public class Fight extends TownTask {
         super(t);
         double level = 0.5 + rand.nextGaussian() * vars.get(MONSTER_LEVEL_CHANCE);
         if(level < 0) level = 0;
-        monster = tables.monsterGen.getMonster(t, (float) level);
+        monster = tables.monsterGen.getMonster(t, 0, (float) level);
         hp = monster.getHP();
     }
 
